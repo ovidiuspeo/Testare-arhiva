@@ -87,8 +87,6 @@ function renderTable(rows, coloaneDeAfisat) {
     });
 }
 
-
-
 // -------------------------------------------------------------
 // 1.3. Funcția de filtrare pe coloane
 // -------------------------------------------------------------
@@ -107,20 +105,64 @@ function aplicaFiltre() {
         Array.from(row.cells).forEach((cell, index) => {
             const colName = filtre[index].dataset.col;
             const filtru = valoriFiltre[colName];
+            if (filtru === "") return;
 
-            if (filtru !== "") {
-                const text = cell.innerText.toLowerCase();
-                if (!text.includes(filtru)) {
+            const text = cell.innerText.toLowerCase();
+            const numericCell = parseFloat(text);
+
+            // -----------------------------
+            // 1. Interval: "10-20"
+            // -----------------------------
+            if (/^\d+\s*-\s*\d+$/.test(filtru)) {
+                const [min, max] = filtru.split("-").map(v => parseFloat(v));
+                if (isNaN(numericCell) || numericCell < min || numericCell > max) {
                     vizibil = false;
                 }
+                return;
+            }
+
+            // -----------------------------
+            // 2. Operatori: >, <, >=, <=
+            // -----------------------------
+            if (/^(>=|<=|>|<)\s*\d+(\.\d+)?$/.test(filtru)) {
+                const op = filtru.match(/>=|<=|>|</)[0];
+                const val = parseFloat(filtru.replace(op, ""));
+
+                if (isNaN(numericCell)) {
+                    vizibil = false;
+                    return;
+                }
+
+                if (op === ">"  && !(numericCell >  val)) vizibil = false;
+                if (op === "<"  && !(numericCell <  val)) vizibil = false;
+                if (op === ">=" && !(numericCell >= val)) vizibil = false;
+                if (op === "<=" && !(numericCell <= val)) vizibil = false;
+
+                return;
+            }
+
+            // -----------------------------
+            // 3. Egalitate numerică simplă
+            // -----------------------------
+            if (!isNaN(parseFloat(filtru))) {
+                const val = parseFloat(filtru);
+                if (isNaN(numericCell) || numericCell !== val) {
+                    vizibil = false;
+                }
+                return;
+            }
+
+            // -----------------------------
+            // 4. Filtrare text normală
+            // -----------------------------
+            if (!text.includes(filtru)) {
+                vizibil = false;
             }
         });
 
         row.style.display = vizibil ? "" : "none";
     });
 }
-
-
 
 // -------------------------------------------------------------
 // 2. Funcția apelată de butonul "Caută"
