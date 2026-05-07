@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// 1. Funcția care afișează tabelul (cu link-uri + filtrare) v1.21
+// 1. Funcția care afișează tabelul (cu link-uri + filtrare) v1.22
 // -------------------------------------------------------------
 function renderTable(rows, coloaneDeAfisat) {
     const thead = document.querySelector("#tabelPesteri thead");
@@ -215,4 +215,10 @@ function toggleToateColoanele() {
     checkboxuri.forEach(cb => {
         cb.checked = !oricareBifat;
     });
+}
+function resetFiltre() {
+    const filtre = document.querySelectorAll(".filter-row input");
+    filtre.forEach(f => f.value = "");
+
+    aplicaFiltre(); // refiltrăm tabelul (afișează tot)
 }
