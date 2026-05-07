@@ -4,22 +4,58 @@
   <meta charset="UTF-8">
   <title>Listare Peșteri</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.min.js"></script>
-<script src="listare.js?v=1.22"></script>
-<script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.min.js"></script>
+  <script src="listare.js?v=1.22"></script>
+  <script>
   // Punem codul direct aici ca să fim siguri că se execută
-  const SUPABASE_URL = "https://uymmflfhpeurfiigeivh.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5";
-  window.db_supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  console.log("Conexiune forțată în HTML:", window.db_supa);
-</script>
+    const SUPABASE_URL = "https://uymmflfhpeurfiigeivh.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5";
+    window.db_supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log("Conexiune forțată în HTML:", window.db_supa);
+  </script>
 
   <style>
     body { font-family: Arial; margin: 20px; }
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #999; padding: 6px; font-size: 14px; }
     th { background: #eee; }
-  </style>
+
+    /* ================================
+       1. Coloana NrP1 (NrP)
+       ================================ */
+    #tabelPesteri th:nth-child(1),
+    #tabelPesteri td:nth-child(1) {
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* ================================
+       2. Coloana Var
+       ================================ */
+    #tabelPesteri th:nth-child(2),
+    #tabelPesteri td:nth-child(2) {
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* ================================
+       3. Coloana Denumire
+       ================================ */
+    #tabelPesteri th:nth-child(3),
+    #tabelPesteri td:nth-child(3) {
+        min-width: 150px;     /* ajustezi după test */
+        max-width: 350px;     /* limitează pe ecrane mari */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
 </head>
 
 <body>
