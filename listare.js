@@ -157,4 +157,3 @@ function toggleToateColoanele() {
         row.style.display = vizibil ? "" : "none";
     });
 }
-
