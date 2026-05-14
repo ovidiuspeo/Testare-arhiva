@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// 1. Funcția care afișează tabelul (cu link-uri + filtrare) v1.22
+// 1. Funcția care afișează tabelul (cu link-uri + filtrare) v1.23
 // -------------------------------------------------------------
 function renderTable(rows, coloaneDeAfisat) {
     const thead = document.querySelector("#tabelPesteri thead");
