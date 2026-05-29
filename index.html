@@ -92,15 +92,18 @@ CodB1:
     <strong style="display:block; margin-bottom:10px;">Selectează date suplimentare:</strong>
  
     <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-      <fieldset class="grup-selectie"><legend>Sinonime - Marcare - Localizare</legend>
-          <label><input type="checkbox" class="coloana-db" value="SinList" checked> SinList</label>
-          <label><input type="checkbox" class="coloana-db" value="SitMarc" checked> SitMarc</label>     
-          <label><input type="checkbox" class="coloana-db" value="DomMorf" checked> DomMorf</label>
-          <label><input type="checkbox" class="coloana-db" value="Vale" checked> Vale</label>
-          <label><input type="checkbox" class="coloana-db" value="Afluent" checked> Afluent</label>
-          <label><input type="checkbox" class="coloana-db" value="Versant" checked> Versant</label>
-          <label><input type="checkbox" class="coloana-db" value="Munte" checked> Munte</label>
-      </fieldset> 
+      <fieldset class="grup-selectie" data-grupa="sinonime">
+        <legend onclick="toggleGrupa('sinonime')">Sinonime – Marcare – Localizare</legend>
+    
+        <label><input type="checkbox" class="coloana-db" value="SinList" checked> SinList</label>
+        <label><input type="checkbox" class="coloana-db" value="SitMarc" checked> SitMarc</label>     
+        <label><input type="checkbox" class="coloana-db" value="DomMorf" checked> DomMorf</label>
+        <label><input type="checkbox" class="coloana-db" value="Vale" checked> Vale</label>
+        <label><input type="checkbox" class="coloana-db" value="Afluent" checked> Afluent</label>
+        <label><input type="checkbox" class="coloana-db" value="Versant" checked> Versant</label>
+        <label><input type="checkbox" class="coloana-db" value="Munte" checked> Munte</label>
+      </fieldset>
+
       <fieldset class="grup-selectie"><legend>Carateristici Intrare A</legend>
         <label><input type="checkbox" class="coloana-db" value="NrDesc" checked> NrDesc</label>
         <label><input type="checkbox" class="coloana-db" value="Ld1" checked> L-d1</label>
