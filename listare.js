@@ -216,6 +216,17 @@ function toggleToateColoanele() {
         cb.checked = !oricareBifat;
     });
 }
+// -------------------------------------------------------------
+// 4. Selectie / Deselectie pe grupe
+// -------------------------------------------------------------
+function toggleGrupa(numeGrupa) {
+    const fieldset = document.querySelector(`fieldset[data-grupa="${numeGrupa}"]`);
+    const checkboxuri = fieldset.querySelectorAll('input[type="checkbox"]');
+
+    const oricareBifat = Array.from(checkboxuri).some(cb => cb.checked);
+
+    checkboxuri.forEach(cb => cb.checked = !oricareBifat);
+}
 function resetFiltre() {
     const filtre = document.querySelectorAll(".filter-row input");
     filtre.forEach(f => f.value = "");
