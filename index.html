@@ -147,14 +147,18 @@ CodB1:
         <label><input type="checkbox" class="coloana-db" value="Conserv" checked> Conserv</label>
       </fieldset>
 
+      <fieldset class="grup-selectie" data-grupa="descoperitori">
+        <legend onclick="toggleGrupa('descoperitori')">Descoperitorii pesterii</legend>
      
-      <fieldset class="grup-selectie"><legend>Descoperitorii pesterii</legend>
         <label><input type="checkbox" class="coloana-db" value="Autor" checked> Autor</label>
         <label><input type="checkbox" class="coloana-db" value="Club" checked> Club</label>
         <label><input type="checkbox" class="coloana-db" value="DataD" checked> DataD</label>
         <label><input type="checkbox" class="coloana-db" value="Redactor" checked> Redactor</label>
       </fieldset>
-      <fieldset class="grup-selectie"><legend>Schite - Harti - Documente</legend>
+
+     <fieldset class="grup-selectie" data-grupa="harti">
+        <legend onclick="toggleGrupa('harti')">Schite - Harti - Documente</legend>
+
         <label><input type="checkbox" class="coloana-db" value="num_sch" checked> Schita</label>
         <label><input type="checkbox" class="coloana-db" value="num_loc" checked> Local</label>
         <label><input type="checkbox" class="coloana-db" value="num_map" checked> Harta</label>
