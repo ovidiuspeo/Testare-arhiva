@@ -1,235 +1,199 @@
-// -------------------------------------------------------------
-// 1. Funcția care afișează tabelul (cu link-uri + filtrare) v1.23
-// -------------------------------------------------------------
-function renderTable(rows, coloaneDeAfisat) {
-    const thead = document.querySelector("#tabelPesteri thead");
-    const theadRow = document.querySelector("#tabelPesteri thead tr");
-    const tbody = document.querySelector("#tabelPesteri tbody");
+<!DOCTYPE html>
+<!-- Versiune index.html: 1.23 -->
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Listare Peșteri</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.min.js"></script>
+  <script src="listare.js?v=1.23"></script>
+  <script>
+  // Punem codul direct aici ca să fim siguri că se execută v=1.23
+    const SUPABASE_URL = "https://uymmflfhpeurfiigeivh.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5";
+    window.db_supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log("Conexiune forțată în HTML:", window.db_supa);
+  </script>
 
-    theadRow.innerHTML = "";
-    tbody.innerHTML = "";
-
-    if (!rows || rows.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='3'>Nu s-au găsit date.</td></tr>";
-        return;
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #999; padding: 6px; font-size: 14px; }
+    th { background: #eee; }
+    /* ================================
+       1. Coloana NrP1 (NrP)
+       ================================ */
+    #tabelPesteri th:nth-child(1),
+    #tabelPesteri td:nth-child(1) {
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
+        text-align: center;
+        white-space: nowrap;
     }
 
-    // Configurație pentru link-uri: Coloana -> Bucket
-    const configMedia = {
-        'num_alt': 'diverse',
-        'num_foto': 'intrari',
-        'num_sch': 'schite',
-        'num_loc': 'localizari',
-        'num_map': 'harti'
-    };
-
-    // 1.1. Generăm Header-ul
-    coloaneDeAfisat.forEach(numeColoana => {
-        const th = document.createElement("th");
-        th.textContent = numeColoana;
-        theadRow.appendChild(th);
-    });
-
-    // ---------------------------------------------------------
-    // 🔍 FILTRARE: Adăugăm un rând cu input-uri sub header
-    // ---------------------------------------------------------
-    let filterRow = document.querySelector("#tabelPesteri thead tr.filter-row");
-    if (filterRow) filterRow.remove();
-
-    filterRow = document.createElement("tr");
-    filterRow.classList.add("filter-row");
-
-    coloaneDeAfisat.forEach(col => {
-        const th = document.createElement("th");
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "Filtru...";
-        input.dataset.col = col;
-
-        input.addEventListener("input", () => aplicaFiltre());
-
-        th.appendChild(input);
-        filterRow.appendChild(th);
-    });
-
-    thead.appendChild(filterRow);
-
-    // ---------------------------------------------------------
-    // 1.2. Generăm Rândurile
-    // ---------------------------------------------------------
-    rows.forEach(r => {
-        const tr = document.createElement("tr");
-
-        coloaneDeAfisat.forEach(numeColoana => {
-            const td = document.createElement("td");
-            const valoare = r[numeColoana] ?? "";
-
-            if (configMedia[numeColoana] && valoare !== "") {
-                const bucket = configMedia[numeColoana];
-                const folderCodBazin = r['CodB1'];
-
-                const link = document.createElement("a");
-                link.href = `https://uymmflfhpeurfiigeivh.supabase.co/storage/v1/object/public/${bucket}/${folderCodBazin}/${valoare}`;
-                link.target = "_blank";
-                link.textContent = valoare;
-                link.style.color = "blue";
-                link.style.textDecoration = "underline";
-
-                td.appendChild(link);
-            } else {
-                td.textContent = valoare;
-            }
-
-            tr.appendChild(td);
-        });
-
-        tbody.appendChild(tr);
-    });
-}
-
-// -------------------------------------------------------------
-// 1.3. Funcția de filtrare pe coloane
-// -------------------------------------------------------------
-function aplicaFiltre() {
-    const tbody = document.querySelector("#tabelPesteri tbody");
-    const filtre = document.querySelectorAll(".filter-row input");
-
-    const valoriFiltre = {};
-    filtre.forEach(f => {
-        valoriFiltre[f.dataset.col] = f.value.trim().toLowerCase();
-    });
-
-    Array.from(tbody.rows).forEach(row => {
-        let vizibil = true;
-
-        Array.from(row.cells).forEach((cell, index) => {
-            const colName = filtre[index].dataset.col;
-            const filtru = valoriFiltre[colName];
-            if (filtru === "") return;
-
-            const text = cell.innerText.toLowerCase();
-            const numericCell = parseFloat(text);
-
-            // -----------------------------
-            // 1. Interval: "10-20"
-            // -----------------------------
-            if (/^\d+\s*-\s*\d+$/.test(filtru)) {
-                const [min, max] = filtru.split("-").map(v => parseFloat(v));
-                if (isNaN(numericCell) || numericCell < min || numericCell > max) {
-                    vizibil = false;
-                }
-                return;
-            }
-
-            // -----------------------------
-            // 2. Operatori: >, <, >=, <=
-            // -----------------------------
-            if (/^(>=|<=|>|<)\s*\d+(\.\d+)?$/.test(filtru)) {
-                const op = filtru.match(/>=|<=|>|</)[0];
-                const val = parseFloat(filtru.replace(op, ""));
-
-                if (isNaN(numericCell)) {
-                    vizibil = false;
-                    return;
-                }
-
-                if (op === ">"  && !(numericCell >  val)) vizibil = false;
-                if (op === "<"  && !(numericCell <  val)) vizibil = false;
-                if (op === ">=" && !(numericCell >= val)) vizibil = false;
-                if (op === "<=" && !(numericCell <= val)) vizibil = false;
-
-                return;
-            }
-
-            // -----------------------------
-            // 3. Egalitate numerică simplă
-            // -----------------------------
-            if (!isNaN(parseFloat(filtru))) {
-                const val = parseFloat(filtru);
-                if (isNaN(numericCell) || numericCell !== val) {
-                    vizibil = false;
-                }
-                return;
-            }
-
-            // -----------------------------
-            // 4. Filtrare text normală
-            // -----------------------------
-            if (!text.includes(filtru)) {
-                vizibil = false;
-            }
-        });
-
-        row.style.display = vizibil ? "" : "none";
-    });
-}
-
-// -------------------------------------------------------------
-// 2. Funcția apelată de butonul "Caută"
-// -------------------------------------------------------------
-async function loadBazin() {
-    const cod = document.getElementById("bazin").value.trim();
-    if (!cod) { alert("Introduceți un CodB1"); return; }
-
-    if (!window.db_supa) {
-        alert("Eroare: Conexiunea nu a fost stabilită.");
-        return;
+    /* ================================
+       2. Coloana Var
+       ================================ */
+    #tabelPesteri th:nth-child(2),
+    #tabelPesteri td:nth-child(2) {
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
+        text-align: center;
+        white-space: nowrap;
     }
 
-    // 2.1. Coloane vizibile permanent
-    const coloaneVizibile = ['NrP1', 'Var', 'Denumire'];
-
-    // 2.2. Adăugăm coloanele selectate din checkbox-uri
-    const checkboxuri = document.querySelectorAll('.coloana-db:checked');
-    checkboxuri.forEach(cb => {
-        coloaneVizibile.push(cb.value);
-    });
-
-    // 2.3. Cerem CodB1 chiar dacă nu e vizibil
-    const coloaneDeCerut = Array.from(new Set(['CodB1', ...coloaneVizibile]));
-    const listaSelect = coloaneDeCerut.map(c => `"${c}"`).join(',');
-
-    const { data, error } = await window.db_supa
-        .from('pesteri_versiuni')
-        .select(listaSelect)
-        .eq('CodB1', cod)
-        .order('NrP1', { ascending: true })
-        .order('Var', { ascending: true });
-
-    if (error) {
-        console.error('Eroare:', error);
-        alert("Eroare la încărcarea datelor.");
-        return;
+    /* ================================
+       3. Coloana Denumire
+       ================================ */
+    #tabelPesteri th:nth-child(3),
+    #tabelPesteri td:nth-child(3) {
+        min-width: 150px;     /* ajustezi după test */
+        max-width: 350px;     /* limitează pe ecrane mari */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    renderTable(data, coloaneVizibile);
+    fieldset.grup-selectie legend {
+    cursor: pointer;
+    background: #e0e0e0;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #888;
+    font-weight: bold;
+    display: inline-block;
 }
+</style>
+</head>
 
-// -------------------------------------------------------------
-// 3. Selectie toate coloanele
-// -------------------------------------------------------------
-function toggleToateColoanele() {
-    const checkboxuri = document.querySelectorAll('.coloana-db');
-    const oricareBifat = Array.from(checkboxuri).some(cb => cb.checked);
+<body>
 
-    checkboxuri.forEach(cb => {
-        cb.checked = !oricareBifat;
-    });
+<!-- LOGIN -->
+<div id="login">
+  <h3>Acces restricționat</h3>
+  Parolă: <input id="pass" type="password">
+  <button onclick="login()">Intră</button>
+</div>
+
+<!-- CONȚINUT -->
+<div id="content" style="display:none;">
+
+  <h2>Lista peșterilor din Bazinul Hidrografic cu codul CodB1</h2>
+
+<!-- 1. Secțiunea de introducere CodB1 -->
+CodB1:
+<select id="bazin">
+  <option value="2046">2046</option>
+  <option value="2050">2050</option>
+</select>
+
+<button onclick="loadBazin()">Caută</button>
+&nbsp;&nbsp;&nbsp;
+<button onclick="resetFiltre()">Reset filtre</button>
+&nbsp;&nbsp;&nbsp;
+<button onclick="toggleToateColoanele()">Selectare / Deselectare TOT</button>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<button onclick="window.open('mod.htm', '_blank')">Informatii ajutatoare</button>
+
+
+<!-- 2. NOUA Secțiune de selecție coloane (pusă aici) -->
+  <div id="selectieColoane" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin: 20px 0; border-radius: 5px;">
+    <strong style="display:block; margin-bottom:10px;">Coloane afișate permanent: NrP1, Var, Denumire</strong>
+    <strong style="display:block; margin-bottom:10px;">Selectează date suplimentare:</strong>
+ 
+    <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+      <fieldset class="grup-selectie" data-grupa="sinonime">
+        <legend onclick="toggleGrupa('sinonime')">Sinonime – Marcare – Localizare</legend>
+    
+        <label><input type="checkbox" class="coloana-db" value="SinList" checked> SinList</label>
+        <label><input type="checkbox" class="coloana-db" value="SitMarc" checked> SitMarc</label>     
+        <label><input type="checkbox" class="coloana-db" value="DomMorf" checked> DomMorf</label>
+        <label><input type="checkbox" class="coloana-db" value="Vale" checked> Vale</label>
+        <label><input type="checkbox" class="coloana-db" value="Afluent" checked> Afluent</label>
+        <label><input type="checkbox" class="coloana-db" value="Versant" checked> Versant</label>
+        <label><input type="checkbox" class="coloana-db" value="Munte" checked> Munte</label>
+      </fieldset>
+
+      <fieldset class="grup-selectie" data-grupa="caracteristiciA">
+        <legend onclick="toggleGrupa('caracteristiciA')">Caracteristici Intrare A</legend>
+
+        <label><input type="checkbox" class="coloana-db" value="NrDesc" checked> NrDesc</label>
+        <label><input type="checkbox" class="coloana-db" value="Ld1" checked> L-d1</label>
+        <label><input type="checkbox" class="coloana-db" value="Id1" checked> I-d1</label>
+        <label><input type="checkbox" class="coloana-db" value="Md1" checked> M-d1</label>          
+        <label><input type="checkbox" class="coloana-db" value="Hd1" checked> H-d1</label>
+        <label><input type="checkbox" class="coloana-db" value="Od1" checked> O-d1</labl>
+      </fieldset>
+
+       <fieldset class="grup-selectie" data-grupa="parametri">
+        <legend onclick="toggleGrupa('parametri')">Parametri Pestera</legend>
+        
+        <label><input type="checkbox" class="coloana-db" value="AltAbs" checked> AltAbs</label>
+        <label><input type="checkbox" class="coloana-db" value="AltRel" checked> AltRel</label>
+        <label><input type="checkbox" class="coloana-db" value="DezvTot" checked> DezvTot</label>
+        <label><input type="checkbox" class="coloana-db" value="DenivNC" checked> DenivNC</label>
+        <label><input type="checkbox" class="coloana-db" value="DenivPC" checked> DenivPC</label>
+        <label><input type="checkbox" class="coloana-db" value="ExtLong" checked> ExtLong</label>
+        <label><input type="checkbox" class="coloana-db" value="NrEtaj" checked> NrEtaj</label>
+      </fieldset>
+
+      <fieldset class="grup-selectie" data-grupa="importanta">
+        <legend onclick="toggleGrupa('importanta')">Importanta pesterii</legend>
+        
+        <label><input type="checkbox" class="coloana-db" value="TipolCav" checked> TipolCav</label>
+        <label><input type="checkbox" class="coloana-db" value="MorfoCav" checked> MorfoCav</label>
+        <label><input type="checkbox" class="coloana-db" value="SpTeme" checked> SpTeme</label>
+        <label><input type="checkbox" class="coloana-db" value="Depozit" checked> Depozit</label>
+        <label><input type="checkbox" class="coloana-db" value="Fauna" checked> Fauna</label>
+        <label><input type="checkbox" class="coloana-db" value="Conserv" checked> Conserv</label>
+      </fieldset>
+
+      <fieldset class="grup-selectie" data-grupa="descoperitori">
+        <legend onclick="toggleGrupa('descoperitori')">Descoperitorii pesterii</legend>
+     
+        <label><input type="checkbox" class="coloana-db" value="Autor" checked> Autor</label>
+        <label><input type="checkbox" class="coloana-db" value="Club" checked> Club</label>
+        <label><input type="checkbox" class="coloana-db" value="DataD" checked> DataD</label>
+        <label><input type="checkbox" class="coloana-db" value="Redactor" checked> Redactor</label>
+      </fieldset>
+
+     <fieldset class="grup-selectie" data-grupa="harti">
+        <legend onclick="toggleGrupa('harti')">Schite - Harti - Documente</legend>
+
+        <label><input type="checkbox" class="coloana-db" value="num_sch" checked> Schita</label>
+        <label><input type="checkbox" class="coloana-db" value="num_loc" checked> Local</label>
+        <label><input type="checkbox" class="coloana-db" value="num_map" checked> Harta</label>
+        <label><input type="checkbox" class="coloana-db" value="num_foto" checked> Foto</label>
+        <label><input type="checkbox" class="coloana-db" value="num_alt" checked> Docu</label>
+      </fieldset>
+    </div>
+  </div> 
+ 
+</div>
+
+  <table id="tabelPesteri">
+    <thead>
+      <tr>
+<!-- Lăsăm gol aici. JavaScript va genera <th>-urile automat -->
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+</div>
+
+<script>
+function login() {
+  const parola = document.getElementById("pass").value;
+  if (parola !== "demo123") {
+    alert("Parolă greșită");
+    return;
+  }
+  document.getElementById("login").style.display = "none";
+  document.getElementById("content").style.display = "block";
 }
-// -------------------------------------------------------------
-// 4. Selectie / Deselectie pe grupe
-// -------------------------------------------------------------
-function toggleGrupa(numeGrupa) {
-    const fieldset = document.querySelector(`fieldset[data-grupa="${numeGrupa}"]`);
-    const checkboxuri = fieldset.querySelectorAll('input[type="checkbox"]');
+</script>
 
-    const oricareBifat = Array.from(checkboxuri).some(cb => cb.checked);
-
-    checkboxuri.forEach(cb => cb.checked = !oricareBifat);
-}
-function resetFiltre() {
-    const filtre = document.querySelectorAll(".filter-row input");
-    filtre.forEach(f => f.value = "");
-
-    aplicaFiltre(); // refiltrăm tabelul (afișează tot)
-}
+</body>
+</html>
