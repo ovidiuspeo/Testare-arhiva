@@ -95,14 +95,14 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.min.js"></script>
-
-<script>
-const supa = supabase.createClient(
-  "https://uymmflfhpeurfiigeivh.supabase.co",
-   "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5"
-);
-</script>
 <script src="harta.js"></script>
+
+  <script>
+    const SUPABASE_URL = "https://uymmflfhpeurfiigeivh.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5";
+    window.db_supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log("Conexiune forțată în HTML:", window.db_supa);
+  </script>
 
 </body>
 </html>
