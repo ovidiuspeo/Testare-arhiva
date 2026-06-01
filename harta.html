@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<!-- Versiunea 1.24 — Harta bazinului -->
+
+<title>Harta Peșteri</title>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Harta = 75% */
+  #map {
+    width: 75%;
+    height: 100%;
+  }
+
+  /* Panou dreapta = 25% */
+  #sidebar {
+    width: 25%;
+    height: 100%;
+    overflow-y: auto;
+    border-left: 2px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  #codB1Title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th, td {
+    border: 1px solid #aaa;
+    padding: 6px;
+    text-align: left;
+  }
+
+  .btn-marker {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .verde { background: #2ecc71; }
+  .rosu  { background: #e74c3c; }
+</style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<div id="sidebar">
+  <div id="codB1Title">CodB1</div>
+
+  <table id="tabelPesteri">
+    <thead>
+      <tr>
+        <th>NrP1</th>
+        <th>Denumire</th>
+        <th>Set</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Scriptul tău -->
+<script src="harta.js"></script>
+
+</body>
+</html>
