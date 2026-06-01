@@ -137,5 +137,3 @@ function renuntaCoordonate() {
   if (markerSelectie) map.removeLayer(markerSelectie);
   markerSelectie = null;
 }
-// încărcare implicită
-incarcaPesteri(2046);
