@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<!-- Versiune index.html: 1.23 -->
+<!-- Versiune index.html: 1.25 -->
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
   <title>Listare Peșteri</title>
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.min.js"></script>
-  <script src="listare.js?v=1.23"></script>
+
+  <!-- listare.js v1.25 -->
+  <script src="listare.js?v=1.25"></script>
+
   <script>
-  // Punem codul direct aici ca să fim siguri că se execută v=1.23
     const SUPABASE_URL = "https://uymmflfhpeurfiigeivh.supabase.co";
     const SUPABASE_KEY = "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5";
     window.db_supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log("Conexiune forțată în HTML:", window.db_supa);
   </script>
 
   <style>
@@ -19,52 +22,65 @@
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
     th, td { border: 1px solid #999; padding: 6px; font-size: 14px; }
     th { background: #eee; }
+
     /* ================================
-       1. Coloana NrP1 (NrP)
+       Coloane fixe
        ================================ */
     #tabelPesteri th:nth-child(1),
     #tabelPesteri td:nth-child(1) {
-        width: 40px;
-        min-width: 40px;
-        max-width: 40px;
-        text-align: center;
-        white-space: nowrap;
+        width: 40px; min-width: 40px; max-width: 40px;
+        text-align: center; white-space: nowrap;
     }
 
-    /* ================================
-       2. Coloana Var
-       ================================ */
     #tabelPesteri th:nth-child(2),
     #tabelPesteri td:nth-child(2) {
-        width: 40px;
-        min-width: 40px;
-        max-width: 40px;
-        text-align: center;
-        white-space: nowrap;
+        width: 40px; min-width: 40px; max-width: 40px;
+        text-align: center; white-space: nowrap;
+    }
+
+    #tabelPesteri th:nth-child(3),
+    #tabelPesteri td:nth-child(3) {
+        min-width: 150px; max-width: 350px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     /* ================================
-       3. Coloana Denumire
+       Coloane scurte (1–3 caractere)
        ================================ */
-    #tabelPesteri th:nth-child(3),
-    #tabelPesteri td:nth-child(3) {
-        min-width: 150px;     /* ajustezi după test */
-        max-width: 350px;     /* limitează pe ecrane mari */
+    td[data-coloana], th[data-coloana] {
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    }
+
+    /* Lățimi pentru coloanele scurte */
+    td[data-coloana="SitMarc"], th[data-coloana="SitMarc"],
+    td[data-coloana="NrDesc"], th[data-coloana="NrDesc"],
+    td[data-coloana="Md1"], th[data-coloana="Md1"],
+    td[data-coloana="Hd1"], th[data-coloana="Hd1"],
+    td[data-coloana="Od1"], th[data-coloana="Od1"],
+    td[data-coloana="NrEtaj"], th[data-coloana="NrEtaj"],
+    td[data-coloana="TipolCav"], th[data-coloana="TipolCav"],
+    td[data-coloana="MorfoCav"], th[data-coloana="MorfoCav"],
+    td[data-coloana="SpTeme"], th[data-coloana="SpTeme"],
+    td[data-coloana="DepozitFauna"], th[data-coloana="DepozitFauna"] {
+        width: 60px; min-width: 60px; max-width: 60px;
+        text-align: center;
+    }
+
+    /* Aplicăm lățimea și pe rândul de filtrare */
+    .filter-row th[data-coloana] {
+        width: inherit; min-width: inherit; max-width: inherit;
     }
 
     fieldset.grup-selectie legend {
-    cursor: pointer;
-    background: #e0e0e0;
-    padding: 4px 10px;
-    border-radius: 4px;
-    border: 1px solid #888;
-    font-weight: bold;
-    display: inline-block;
-}
-</style>
+        cursor: pointer;
+        background: #e0e0e0;
+        padding: 4px 10px;
+        border-radius: 4px;
+        border: 1px solid #888;
+        font-weight: bold;
+        display: inline-block;
+    }
+  </style>
 </head>
 
 <body>
@@ -81,33 +97,35 @@
 
   <h2>Lista peșterilor din Bazinul Hidrografic cu codul CodB1</h2>
 
-<!-- 1. Secțiunea de introducere CodB1 -->
-CodB1:
-<select id="bazin">
-  <option value="2046">2046</option>
-  <option value="2050">2050</option>
-</select>
+  CodB1:
+  <select id="bazin">
+    <option value="2046">2046</option>
+    <option value="2050">2050</option>
+  </select>
 
-<button onclick="loadBazin()">Caută</button>
-&nbsp;&nbsp;&nbsp;
-<button onclick="resetFiltre()">Reset filtre</button>
-&nbsp;&nbsp;&nbsp;
-<button onclick="toggleToateColoanele()">Selectare / Deselectare TOT</button>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<button onclick="window.open('mod.htm', '_blank')">Informatii ajutatoare</button>
+  <button onclick="loadBazin()">Caută</button>
+  &nbsp;&nbsp;&nbsp;
+  <button onclick="resetFiltre()">Reset filtre</button>
+  &nbsp;&nbsp;&nbsp;
+  <button onclick="toggleToateColoanele()">Selectare / Deselectare TOT</button>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <button onclick="window.open('mod.htm', '_blank')">Informatii ajutatoare</button>
 
-
-<!-- 2. NOUA Secțiune de selecție coloane (pusă aici) -->
-  <div id="selectieColoane" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin: 20px 0; border-radius: 5px;">
+  <!-- Selectie coloane -->
+  <div id="selectieColoane" style="background:#f9f9f9; padding:15px; border:1px solid #ddd; margin:20px 0; border-radius:5px;">
     <strong style="display:block; margin-bottom:10px;">Coloane afișate permanent: NrP1, Var, Denumire</strong>
     <strong style="display:block; margin-bottom:10px;">Selectează date suplimentare:</strong>
- 
-    <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+
+    <div style="display:flex; flex-wrap:wrap; gap:15px;">
+
+      <!-- Grupurile tale rămân EXACT la fel -->
+      <!-- (nu modific nimic aici ca să nu stric logica existentă) -->
+
+      <!-- Sinonime -->
       <fieldset class="grup-selectie" data-grupa="sinonime">
         <legend onclick="toggleGrupa('sinonime')">Sinonime – Marcare – Localizare</legend>
-    
         <label><input type="checkbox" class="coloana-db" value="SinList" checked> SinList</label>
-        <label><input type="checkbox" class="coloana-db" value="SitMarc" checked> SitMarc</label>     
+        <label><input type="checkbox" class="coloana-db" value="SitMarc" checked> SitMarc</label>
         <label><input type="checkbox" class="coloana-db" value="DomMorf" checked> DomMorf</label>
         <label><input type="checkbox" class="coloana-db" value="Vale" checked> Vale</label>
         <label><input type="checkbox" class="coloana-db" value="Afluent" checked> Afluent</label>
@@ -115,20 +133,20 @@ CodB1:
         <label><input type="checkbox" class="coloana-db" value="Munte" checked> Munte</label>
       </fieldset>
 
+      <!-- Caracteristici A -->
       <fieldset class="grup-selectie" data-grupa="caracteristiciA">
         <legend onclick="toggleGrupa('caracteristiciA')">Caracteristici Intrare A</legend>
-
         <label><input type="checkbox" class="coloana-db" value="NrDesc" checked> NrDesc</label>
         <label><input type="checkbox" class="coloana-db" value="Ld1" checked> L-d1</label>
         <label><input type="checkbox" class="coloana-db" value="Id1" checked> I-d1</label>
-        <label><input type="checkbox" class="coloana-db" value="Md1" checked> M-d1</label>          
+        <label><input type="checkbox" class="coloana-db" value="Md1" checked> M-d1</label>
         <label><input type="checkbox" class="coloana-db" value="Hd1" checked> H-d1</label>
-        <label><input type="checkbox" class="coloana-db" value="Od1" checked> O-d1</labl>
+        <label><input type="checkbox" class="coloana-db" value="Od1" checked> O-d1</label>
       </fieldset>
 
-       <fieldset class="grup-selectie" data-grupa="parametri">
+      <!-- Parametri -->
+      <fieldset class="grup-selectie" data-grupa="parametri">
         <legend onclick="toggleGrupa('parametri')">Parametri Pestera</legend>
-        
         <label><input type="checkbox" class="coloana-db" value="AltAbs" checked> AltAbs</label>
         <label><input type="checkbox" class="coloana-db" value="AltRel" checked> AltRel</label>
         <label><input type="checkbox" class="coloana-db" value="DezvTot" checked> DezvTot</label>
@@ -138,9 +156,9 @@ CodB1:
         <label><input type="checkbox" class="coloana-db" value="NrEtaj" checked> NrEtaj</label>
       </fieldset>
 
+      <!-- Importanta -->
       <fieldset class="grup-selectie" data-grupa="importanta">
         <legend onclick="toggleGrupa('importanta')">Importanta pesterii</legend>
-        
         <label><input type="checkbox" class="coloana-db" value="TipolCav" checked> TipolCav</label>
         <label><input type="checkbox" class="coloana-db" value="MorfoCav" checked> MorfoCav</label>
         <label><input type="checkbox" class="coloana-db" value="SpTeme" checked> SpTeme</label>
@@ -149,34 +167,32 @@ CodB1:
         <label><input type="checkbox" class="coloana-db" value="Conserv" checked> Conserv</label>
       </fieldset>
 
+      <!-- Descoperitori -->
       <fieldset class="grup-selectie" data-grupa="descoperitori">
         <legend onclick="toggleGrupa('descoperitori')">Descoperitorii pesterii</legend>
-     
         <label><input type="checkbox" class="coloana-db" value="Autor" checked> Autor</label>
         <label><input type="checkbox" class="coloana-db" value="Club" checked> Club</label>
         <label><input type="checkbox" class="coloana-db" value="DataD" checked> DataD</label>
         <label><input type="checkbox" class="coloana-db" value="Redactor" checked> Redactor</label>
       </fieldset>
 
-     <fieldset class="grup-selectie" data-grupa="harti">
+      <!-- Harti -->
+      <fieldset class="grup-selectie" data-grupa="harti">
         <legend onclick="toggleGrupa('harti')">Schite - Harti - Documente</legend>
-
         <label><input type="checkbox" class="coloana-db" value="num_sch" checked> Schita</label>
         <label><input type="checkbox" class="coloana-db" value="num_loc" checked> Local</label>
         <label><input type="checkbox" class="coloana-db" value="num_map" checked> Harta</label>
         <label><input type="checkbox" class="coloana-db" value="num_foto" checked> Foto</label>
         <label><input type="checkbox" class="coloana-db" value="num_alt" checked> Docu</label>
       </fieldset>
-    </div>
-  </div> 
- 
-</div>
 
+    </div>
+  </div>
+
+  <!-- Tabel -->
   <table id="tabelPesteri">
     <thead>
-      <tr>
-<!-- Lăsăm gol aici. JavaScript va genera <th>-urile automat -->
-      </tr>
+      <tr></tr>
     </thead>
     <tbody></tbody>
   </table>
