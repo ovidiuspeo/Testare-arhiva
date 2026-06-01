@@ -1,13 +1,5 @@
 /* Versiunea 1.24 — Harta bazinului */
 // -------------------------------------------------------------
-// 1. Conectare Supabase
-// -------------------------------------------------------------
-const supa = supabase.createClient(
-  "https://uymmflfhpeurfiigeivh.supabase.co",
-  "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5"
-);
-
-// -------------------------------------------------------------
 // 2. Inițializare hartă
 // -------------------------------------------------------------
 const map = L.map('map').setView([45.75, 25.33], 8);
