@@ -27,6 +27,7 @@ function renderTable(rows, coloaneDeAfisat) {
     coloaneDeAfisat.forEach(numeColoana => {
         const th = document.createElement("th");
         th.textContent = numeColoana;
+        th.setAttribute("data-coloana", numeColoana);
         theadRow.appendChild(th);
     });
 
@@ -62,6 +63,7 @@ function renderTable(rows, coloaneDeAfisat) {
 
         coloaneDeAfisat.forEach(numeColoana => {
             const td = document.createElement("td");
+            td.setAttribute("data-coloana", numeColoana);
             const valoare = r[numeColoana] ?? "";
 
             if (configMedia[numeColoana] && valoare !== "") {
