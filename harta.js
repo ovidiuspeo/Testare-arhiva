@@ -4,7 +4,7 @@
 // -------------------------------------------------------------
 const supa = supabase.createClient(
   "https://uymmflfhpeurfiigeivh.supabase.co",
-  "PUBLIC-ANON-KEY-AICI"
+  "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5"
 );
 
 // -------------------------------------------------------------
