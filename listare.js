@@ -26,12 +26,17 @@ function renderTable(rows, coloaneDeAfisat) {
     // ---------------------------------------------------------
     // 1.1. Generăm Header-ul (TH)
     // ---------------------------------------------------------
-    coloaneDeAfisat.forEach(numeColoana => {
-        const th = document.createElement("th");
-        th.textContent = numeColoana;
-        th.setAttribute("data-coloana", numeColoana);
-        theadRow.appendChild(th);
-    });
+    coloaneDeAfisat.forEach(col => {
+    const th = document.createElement("th");
+    th.setAttribute("data-coloana", col);   // ← AICI ERA PROBLEMA
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Filtru...";
+    input.dataset.col = col;
+    input.addEventListener("input", () => aplicaFiltre());
+    th.appendChild(input);
+    filterRow.appendChild(th);
+});
 
     // ---------------------------------------------------------
     // 🔍 FILTRARE: Adăugăm un rând cu input-uri sub header
