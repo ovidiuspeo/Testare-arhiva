@@ -23,11 +23,14 @@ function renderTable(rows, coloaneDeAfisat) {
         'num_map': 'harti'
     };
 
-    // 1.1. Generăm Header-ul
-    coloaneDeAfisat.forEach(numeColoana => {
-    const td = document.createElement("td");
-    td.setAttribute("data-coloana", numeColoana);
-    const valoare = r[numeColoana] ?? "";
+   // 1.1. Generăm Header-ul
+coloaneDeAfisat.forEach(numeColoana => {
+    const th = document.createElement("th");
+    th.textContent = numeColoana;
+    th.setAttribute("data-coloana", numeColoana);
+    theadRow.appendChild(th);
+});
+
 
     if (configMedia[numeColoana] && valoare !== "") {
         const bucket = configMedia[numeColoana];
