@@ -25,11 +25,28 @@ function renderTable(rows, coloaneDeAfisat) {
 
     // 1.1. Generăm Header-ul
     coloaneDeAfisat.forEach(numeColoana => {
-        const th = document.createElement("th");
-        th.textContent = numeColoana;
-        th.setAttribute("data-coloana", numeColoana);
-        theadRow.appendChild(th);
-    });
+    const td = document.createElement("td");
+    td.setAttribute("data-coloana", numeColoana);
+    const valoare = r[numeColoana] ?? "";
+
+    if (configMedia[numeColoana] && valoare !== "") {
+        const bucket = configMedia[numeColoana];
+        const folderCodBazin = r['CodB1'];
+
+        const link = document.createElement("a");
+        link.href = `https://uymmflfhpeurfiigeivh.supabase.co/storage/v1/object/public/${bucket}/${folderCodBazin}/${valoare}`;
+        link.target = "_blank";
+        link.textContent = valoare;
+        link.style.color = "blue";
+        link.style.textDecoration = "underline";
+
+        td.appendChild(link);
+    } else {
+        td.textContent = valoare;
+    }
+
+    tr.appendChild(td);
+});
 
     // ---------------------------------------------------------
     // 🔍 FILTRARE: Adăugăm un rând cu input-uri sub header
