@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// 1. Funcția care afișează tabelul (cu link-uri + filtrare) v1.24
+// 1. Funcția care afișează tabelul (cu link-uri + filtrare) v1.23
 // -------------------------------------------------------------
 function renderTable(rows, coloaneDeAfisat) {
     const thead = document.querySelector("#tabelPesteri thead");
@@ -23,20 +23,12 @@ function renderTable(rows, coloaneDeAfisat) {
         'num_map': 'harti'
     };
 
-    // ---------------------------------------------------------
-    // 1.1. Generăm Header-ul (TH)
-    // ---------------------------------------------------------
-    coloaneDeAfisat.forEach(col => {
-    const th = document.createElement("th");
-    th.setAttribute("data-coloana", col);   // ← AICI ERA PROBLEMA
-    const input = document.createElement("input");
-    input.type = "text";
-    input.placeholder = "Filtru...";
-    input.dataset.col = col;
-    input.addEventListener("input", () => aplicaFiltre());
-    th.appendChild(input);
-    filterRow.appendChild(th);
-});
+    // 1.1. Generăm Header-ul
+    coloaneDeAfisat.forEach(numeColoana => {
+        const th = document.createElement("th");
+        th.textContent = numeColoana;
+        theadRow.appendChild(th);
+    });
 
     // ---------------------------------------------------------
     // 🔍 FILTRARE: Adăugăm un rând cu input-uri sub header
@@ -63,18 +55,15 @@ function renderTable(rows, coloaneDeAfisat) {
     thead.appendChild(filterRow);
 
     // ---------------------------------------------------------
-    // 1.2. Generăm Rândurile (TD)
+    // 1.2. Generăm Rândurile
     // ---------------------------------------------------------
     rows.forEach(r => {
         const tr = document.createElement("tr");
 
         coloaneDeAfisat.forEach(numeColoana => {
             const td = document.createElement("td");
-            td.setAttribute("data-coloana", numeColoana);
-
             const valoare = r[numeColoana] ?? "";
 
-            // Link-uri către Supabase Storage
             if (configMedia[numeColoana] && valoare !== "") {
                 const bucket = configMedia[numeColoana];
                 const folderCodBazin = r['CodB1'];
@@ -121,7 +110,9 @@ function aplicaFiltre() {
             const text = cell.innerText.toLowerCase();
             const numericCell = parseFloat(text);
 
-            // Interval: "10-20"
+            // -----------------------------
+            // 1. Interval: "10-20"
+            // -----------------------------
             if (/^\d+\s*-\s*\d+$/.test(filtru)) {
                 const [min, max] = filtru.split("-").map(v => parseFloat(v));
                 if (isNaN(numericCell) || numericCell < min || numericCell > max) {
@@ -130,7 +121,9 @@ function aplicaFiltre() {
                 return;
             }
 
-            // Operatori: >, <, >=, <=
+            // -----------------------------
+            // 2. Operatori: >, <, >=, <=
+            // -----------------------------
             if (/^(>=|<=|>|<)\s*\d+(\.\d+)?$/.test(filtru)) {
                 const op = filtru.match(/>=|<=|>|</)[0];
                 const val = parseFloat(filtru.replace(op, ""));
@@ -148,7 +141,9 @@ function aplicaFiltre() {
                 return;
             }
 
-            // Egalitate numerică simplă
+            // -----------------------------
+            // 3. Egalitate numerică simplă
+            // -----------------------------
             if (!isNaN(parseFloat(filtru))) {
                 const val = parseFloat(filtru);
                 if (isNaN(numericCell) || numericCell !== val) {
@@ -157,7 +152,9 @@ function aplicaFiltre() {
                 return;
             }
 
-            // Filtrare text normală
+            // -----------------------------
+            // 4. Filtrare text normală
+            // -----------------------------
             if (!text.includes(filtru)) {
                 vizibil = false;
             }
@@ -179,13 +176,16 @@ async function loadBazin() {
         return;
     }
 
+    // 2.1. Coloane vizibile permanent
     const coloaneVizibile = ['NrP1', 'Var', 'Denumire'];
 
+    // 2.2. Adăugăm coloanele selectate din checkbox-uri
     const checkboxuri = document.querySelectorAll('.coloana-db:checked');
     checkboxuri.forEach(cb => {
         coloaneVizibile.push(cb.value);
     });
 
+    // 2.3. Cerem CodB1 chiar dacă nu e vizibil
     const coloaneDeCerut = Array.from(new Set(['CodB1', ...coloaneVizibile]));
     const listaSelect = coloaneDeCerut.map(c => `"${c}"`).join(',');
 
@@ -216,7 +216,6 @@ function toggleToateColoanele() {
         cb.checked = !oricareBifat;
     });
 }
-
 // -------------------------------------------------------------
 // 4. Selectie / Deselectie pe grupe
 // -------------------------------------------------------------
@@ -228,9 +227,9 @@ function toggleGrupa(numeGrupa) {
 
     checkboxuri.forEach(cb => cb.checked = !oricareBifat);
 }
-
 function resetFiltre() {
     const filtre = document.querySelectorAll(".filter-row input");
     filtre.forEach(f => f.value = "");
-    aplicaFiltre();
+
+    aplicaFiltre(); // refiltrăm tabelul (afișează tot)
 }
