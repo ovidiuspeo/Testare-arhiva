@@ -1,4 +1,4 @@
-/* Versiunea 1.25a — Harta bazinului */
+/* Versiunea 1.25b — Harta bazinului */
 
 // -------------------------------------------------------------
 // 3. Încarcă peșterile dintr-un bazin
