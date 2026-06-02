@@ -1,4 +1,4 @@
-/* Versiunea 1.26 — Harta bazinului */
+/* Versiunea 1.26a — Harta bazinului */
 // -------------------------------------------------------------
 // PASUL 2 — Inițializare hartă Leaflet
 // -------------------------------------------------------------
@@ -8,9 +8,25 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: '&copy; OpenStreetMap'
 }).addTo(map);
+// -------------------------------------------------------------
+// PASUL 3 — Marker pentru fiecare peșteră cu coordonate
+// -------------------------------------------------------------
+function puneMarker(r) {
+  if (r.Latit && r.Long) {
+    const marker = L.marker([r.Latit, r.Long]).addTo(map);
+
+    marker.bindPopup(
+      `${r.NrP1}${r.Var || ""} – ${r.Denumire}`
+    );
+
+    return marker;
+  }
+  return null;
+}
+
 
 // -------------------------------------------------------------
-// 3. Încarcă peșterile dintr-un bazin
+// 4. Încarcă peșterile dintr-un bazin
 // -------------------------------------------------------------
 async function incarcaPesteri(codB1) {
   document.getElementById("codB1Title").textContent = "CodB1: " + codB1;
@@ -63,6 +79,17 @@ function afiseazaInTabel(lista) {
     tr.appendChild(tdNr);
     tr.appendChild(tdDen);
     tr.appendChild(tdCoord);
+    
+
+    // PASUL 4 — punem markerul pe hartă
+const marker = puneMarker(r);
+
+// click pe rând → zoom pe marker
+tr.addEventListener("click", () => {
+  if (marker) {
+    map.setView(marker.getLatLng(), 14);
+    marker.openPopup();
+  }
 
     tbody.appendChild(tr);
   });
