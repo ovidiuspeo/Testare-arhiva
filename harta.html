@@ -2,12 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<!-- Versiunea 1.24 — Harta bazinului -->
-
 <title>Harta Peșteri</title>
-
-<!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
   body {
@@ -18,10 +13,12 @@
     overflow: hidden;
   }
 
-  /* Harta = 75% */
+  /* Zona stângă (fostă hartă) — acum goală */
   #map {
     width: 75%;
     height: 100%;
+    background: #f5f5f5; /* un gri deschis, să nu fie alb complet */
+    border-right: 2px solid #ccc;
   }
 
   /* Panou dreapta = 25% */
@@ -29,7 +26,6 @@
     width: 25%;
     height: 100%;
     overflow-y: auto;
-    border-left: 2px solid #ccc;
     padding: 10px;
     box-sizing: border-box;
   }
@@ -52,73 +48,52 @@
     padding: 6px;
     text-align: left;
   }
-
-  .btn-marker {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: inline-block;
-  }
-
-  .verde { background: #2ecc71; }
-  .rosu  { background: #e74c3c; }
 </style>
 </head>
 
 <body>
 
+<!-- Zona de 75% — goală -->
 <div id="map"></div>
 
+<!-- Zona de 25% — tabelul -->
 <div id="sidebar">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-    <div id="codB1Title" style="font-size:22px; font-weight:bold;">CodB1:</div>
+    <div id="codB1Title">CodB1:</div>
 
     <button onclick="location.href='index.html'" 
             style="padding:5px 10px; font-size:14px; cursor:pointer;">
         Înapoi
     </button>
-</div>
+  </div>
 
   <table id="tabelPesteri">
     <thead>
       <tr>
         <th>NrP1</th>
         <th>Denumire</th>
-        <th>Set</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 </div>
 
-    <script>
-    const SUPABASE_URL = "https://uymmflfhpeurfiigeivh.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5";
-    window.db_supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log("Conexiune forțată în HTML:", window.db_supa);
-  </script>
-
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.min.js"></script>
 
-<!-- Scriptul care citește CodB1 din URL -->
 <script>
-const params = new URLSearchParams(window.location.search);
-const codB1 = params.get("cod") || "2046"; // fallback dacă nu vine nimic
+const SUPABASE_URL = "https://uymmflfhpeurfiigeivh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5";
+window.supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// îl facem global pentru harta.js
+// citim codul din URL
+const params = new URLSearchParams(window.location.search);
+const codB1 = params.get("cod") || "2046";
 window.codB1 = codB1;
 
-// afișăm CodB1 în pagină dacă ai un element pentru asta
-const el = document.getElementById("codB1Title");
-if (el) el.textContent = "CodB1: " + codB1;
+document.getElementById("codB1Title").textContent = "CodB1: " + codB1;
 </script>
-  
+
 <script src="harta.js"></script>
-
-
 
 </body>
 </html>
