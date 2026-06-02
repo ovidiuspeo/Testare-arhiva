@@ -22,9 +22,6 @@ async function incarcaPesteri(codB1) {
   afiseazaInTabel(data);
 }
 
-// -------------------------------------------------------------
-// 5. Afișare în tabelul din dreapta
-// -------------------------------------------------------------
 function afiseazaInTabel(lista) {
   const tbody = document.querySelector("#tabelPesteri tbody");
   tbody.innerHTML = "";
@@ -32,14 +29,31 @@ function afiseazaInTabel(lista) {
   lista.forEach(r => {
     const tr = document.createElement("tr");
 
+    // Nr = NrP1 + Var
     const tdNr = document.createElement("td");
-    tdNr.textContent = r.NrP1 + (r.Var || "");  // 1A, 1B, 2A etc.
+    tdNr.textContent = r.NrP1 + (r.Var || "");
 
+    // Denumire
     const tdDen = document.createElement("td");
     tdDen.textContent = r.Denumire;
 
+    // Bulina roșu/verde (coloana 3)
+    const tdCoord = document.createElement("td");
+    const bulina = document.createElement("span");
+    bulina.classList.add("bulina");
+
+    if (r.Latit && r.Long) {
+      bulina.classList.add("verde");
+    } else {
+      bulina.classList.add("rosu");
+    }
+
+    tdCoord.appendChild(bulina);
+
+    // Adăugăm în ordinea corectă
     tr.appendChild(tdNr);
     tr.appendChild(tdDen);
+    tr.appendChild(tdCoord);
 
     tbody.appendChild(tr);
   });
