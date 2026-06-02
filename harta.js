@@ -90,7 +90,6 @@ tr.addEventListener("click", () => {
   if (marker) {
     map.setView(marker.getLatLng(), 14);
     marker.openPopup();
-  }
   });
 }); 
 }
