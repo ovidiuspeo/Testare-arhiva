@@ -102,6 +102,20 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.min.js"></script>
+
+<!-- Scriptul care citește CodB1 din URL -->
+<script>
+const params = new URLSearchParams(window.location.search);
+const codB1 = params.get("cod") || "2046"; // fallback dacă nu vine nimic
+
+// îl facem global pentru harta.js
+window.codB1 = codB1;
+
+// afișăm CodB1 în pagină dacă ai un element pentru asta
+const el = document.getElementById("codB1Title");
+if (el) el.textContent = "CodB1: " + codB1;
+</script>
+  
 <script src="harta.js"></script>
 
 
