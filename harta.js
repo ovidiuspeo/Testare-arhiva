@@ -1,15 +1,4 @@
-/* Versiunea 1.24 — Harta bazinului */
-// -------------------------------------------------------------
-// 2. Inițializare hartă
-// -------------------------------------------------------------
-const map = L.map('map').setView([45.75, 25.33], 8);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 18
-}).addTo(map);
-
-let markerSelectie = null;
-let nrpSelectat = null;
+/* Versiunea 1.25 — Harta bazinului */
 
 // -------------------------------------------------------------
 // 3. Încarcă peșterile dintr-un bazin
@@ -31,18 +20,6 @@ async function incarcaPesteri(codB1) {
 
   afiseazaPeHarta(data);
   afiseazaInTabel(data);
-}
-
-// -------------------------------------------------------------
-// 4. Afișare pe hartă
-// -------------------------------------------------------------
-function afiseazaPeHarta(lista) {
-  lista.forEach(r => {
-    if (r.Latit && r.Long) {
-      const m = L.marker([r.Latit, r.Long], { title: r.Denumire }).addTo(map);
-      m.bindPopup(`<b>${r.Denumire}</b><br>NrP1: ${r.NrP1}<br>${r.Latit}, ${r.Long}`);
-    }
-  });
 }
 
 // -------------------------------------------------------------
@@ -79,55 +56,5 @@ function afiseazaInTabel(lista) {
   });
 }
 
-// -------------------------------------------------------------
-// 6. Modul selectare coordonate
-// -------------------------------------------------------------
-function incepeSelectiaCoordonate(nrp1) {
-  nrpSelectat = nrp1;
-  alert("Selectează un punct pe hartă pentru NrP1 = " + nrp1);
-
-  map.once("click", e => {
-    const { lat, lng } = e.latlng;
-
-    if (markerSelectie) map.removeLayer(markerSelectie);
-
-    markerSelectie = L.marker([lat, lng]).addTo(map);
-
-    markerSelectie.bindPopup(`
-      <b>Coordonate noi</b><br>
-      Lat: <input id="latNou" value="${lat.toFixed(6)}"><br>
-      Lon: <input id="lonNou" value="${lng.toFixed(6)}"><br><br>
-      <button onclick="salveazaCoordonate()">Salvează</button>
-      <button onclick="renuntaCoordonate()">Renunță</button>
-    `).openPopup();
-  });
-}
-
-// -------------------------------------------------------------
-// 7. Salvare coordonate în Supabase
-// -------------------------------------------------------------
-async function salveazaCoordonate() {
-  const lat = parseFloat(document.getElementById("latNou").value);
-  const lon = parseFloat(document.getElementById("lonNou").value);
-
-  const { error } = await supa
-    .from("pesteri_versiuni")
-    .update({ Latit: lat, Long: lon })
-    .eq("NrP1", nrpSelectat);
-
-  if (error) {
-    alert("Eroare la salvare.");
-    console.error(error);
-    return;
-  }
-
-  alert("Coordonate salvate!");
-  location.reload();
-}
-
-function renuntaCoordonate() {
-  if (markerSelectie) map.removeLayer(markerSelectie);
-  markerSelectie = null;
-}
 // Pornim încărcarea peșterilor pentru CodB1 primit din URL
 incarcaPesteri(window.codB1);
