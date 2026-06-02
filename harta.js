@@ -28,15 +28,7 @@ function afiseazaInTabel(lista) {
   const tbody = document.querySelector("#tabelPesteri tbody");
   tbody.innerHTML = "";
 
-  const nrp1Vazute = new Set(); // ținem evidența NrP1 deja afișate
-
   lista.forEach(r => {
-    if (nrp1Vazute.has(r.NrP1)) {
-      return; // dacă NrP1 a fost deja afișat, îl sărim
-    }
-
-    nrp1Vazute.add(r.NrP1); // marcăm NrP1 ca afișat
-
     const tr = document.createElement("tr");
 
     const tdNr = document.createElement("td");
@@ -47,6 +39,7 @@ function afiseazaInTabel(lista) {
 
     tr.appendChild(tdNr);
     tr.appendChild(tdDen);
+    tr.appendChild(tdBtn);
 
     tbody.appendChild(tr);
   });
