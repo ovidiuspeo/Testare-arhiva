@@ -92,6 +92,7 @@ tr.addEventListener("click", () => {
     marker.openPopup();
   }
   });
+}); 
 }
 
 // Pornim încărcarea peșterilor pentru CodB1 primit din URL
