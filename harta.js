@@ -1,4 +1,5 @@
 /* Versiunea 1.26a — Harta bazinului */
+
 // -------------------------------------------------------------
 // PASUL 2 — Inițializare hartă Leaflet
 // -------------------------------------------------------------
@@ -8,6 +9,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: '&copy; OpenStreetMap'
 }).addTo(map);
+
+
 // -------------------------------------------------------------
 // PASUL 3 — Marker pentru fiecare peșteră cu coordonate
 // -------------------------------------------------------------
@@ -47,6 +50,10 @@ async function incarcaPesteri(codB1) {
   afiseazaInTabel(data);
 }
 
+
+// -------------------------------------------------------------
+// 5. Afișează peșterile în tabel + markere pe hartă
+// -------------------------------------------------------------
 function afiseazaInTabel(lista) {
   const tbody = document.querySelector("#tabelPesteri tbody");
   tbody.innerHTML = "";
@@ -79,20 +86,21 @@ function afiseazaInTabel(lista) {
     tr.appendChild(tdNr);
     tr.appendChild(tdDen);
     tr.appendChild(tdCoord);
-    
     tbody.appendChild(tr);
 
- // PASUL 4 — punem markerul pe hartă
-const marker = puneMarker(r);
+    // PASUL 4 — punem markerul pe hartă
+    const marker = puneMarker(r);
 
-// click pe rând → zoom pe marker
-tr.addEventListener("click", () => {
-  if (marker) {
-    map.setView(marker.getLatLng(), 14);
-    marker.openPopup();
-  });
-}); 
-}
+    // click pe rând → zoom pe marker
+    tr.addEventListener("click", () => {
+      if (marker) {
+        map.setView(marker.getLatLng(), 14);
+        marker.openPopup();
+      }
+    });
+  }); // închiderea forEach
+} // închiderea funcției afiseazaInTabel
+
 
 // Pornim încărcarea peșterilor pentru CodB1 primit din URL
 incarcaPesteri(window.codB1);
