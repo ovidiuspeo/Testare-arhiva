@@ -1,4 +1,13 @@
 /* Versiunea 1.26 — Harta bazinului */
+// -------------------------------------------------------------
+// PASUL 2 — Inițializare hartă Leaflet
+// -------------------------------------------------------------
+let map = L.map('map').setView([45.5, 23.5], 9); // centru generic România
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; OpenStreetMap'
+}).addTo(map);
 
 // -------------------------------------------------------------
 // 3. Încarcă peșterile dintr-un bazin
