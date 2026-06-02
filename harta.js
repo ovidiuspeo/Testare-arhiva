@@ -18,7 +18,6 @@ async function incarcaPesteri(codB1) {
     return;
   }
 
-  afiseazaPeHarta(data);
   afiseazaInTabel(data);
 }
 
@@ -37,16 +36,6 @@ function afiseazaInTabel(lista) {
 
     const tdDen = document.createElement("td");
     tdDen.textContent = r.Denumire;
-
-    const tdBtn = document.createElement("td");
-    const btn = document.createElement("div");
-
-    btn.classList.add("btn-marker");
-    btn.classList.add(r.Latit && r.Long ? "verde" : "rosu");
-
-    btn.addEventListener("click", () => incepeSelectiaCoordonate(r.NrP1));
-
-    tdBtn.appendChild(btn);
 
     tr.appendChild(tdNr);
     tr.appendChild(tdDen);
