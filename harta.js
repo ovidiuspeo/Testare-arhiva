@@ -1,4 +1,4 @@
-/* Versiunea 1.25b — Harta bazinului */
+/* Versiunea 1.26 — Harta bazinului */
 
 // -------------------------------------------------------------
 // 3. Încarcă peșterile dintr-un bazin
@@ -8,9 +8,10 @@ async function incarcaPesteri(codB1) {
 
   const { data, error } = await supa
     .from("pesteri_versiuni")
-    .select("NrP1, Denumire, Latit, Long")
+    .select("NrP1, Var, Denumire, Latit, Long")
     .eq("CodB1", codB1)
-    .order("NrP1", { ascending: true });
+    .order("NrP1", { ascending: true })
+    .order("Var", { ascending: true });
 
   if (error) {
     alert("Eroare la încărcare date.");
@@ -32,7 +33,7 @@ function afiseazaInTabel(lista) {
     const tr = document.createElement("tr");
 
     const tdNr = document.createElement("td");
-    tdNr.textContent = r.NrP1;
+    tdNr.textContent = r.NrP1 + (r.Var || "");  // 1A, 1B, 2A etc.
 
     const tdDen = document.createElement("td");
     tdDen.textContent = r.Denumire;
