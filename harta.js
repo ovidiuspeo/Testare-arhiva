@@ -80,8 +80,9 @@ function afiseazaInTabel(lista) {
     tr.appendChild(tdDen);
     tr.appendChild(tdCoord);
     
+    tbody.appendChild(tr);
 
-    // PASUL 4 — punem markerul pe hartă
+ // PASUL 4 — punem markerul pe hartă
 const marker = puneMarker(r);
 
 // click pe rând → zoom pe marker
@@ -90,8 +91,6 @@ tr.addEventListener("click", () => {
     map.setView(marker.getLatLng(), 14);
     marker.openPopup();
   }
-
-    tbody.appendChild(tr);
   });
 }
 
