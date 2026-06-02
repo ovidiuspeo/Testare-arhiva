@@ -39,7 +39,6 @@ function afiseazaInTabel(lista) {
 
     tr.appendChild(tdNr);
     tr.appendChild(tdDen);
-    tr.appendChild(tdBtn);
 
     tbody.appendChild(tr);
   });
