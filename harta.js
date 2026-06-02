@@ -129,3 +129,5 @@ function renuntaCoordonate() {
   if (markerSelectie) map.removeLayer(markerSelectie);
   markerSelectie = null;
 }
+// Pornim încărcarea peșterilor pentru CodB1 primit din URL
+incarcaPesteri(window.codB1);
