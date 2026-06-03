@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- Versiune index.html: 1.27 -->
+<!-- Versiune index.html: 1.28 -->
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
   <title>Listare Peșteri</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.min.js"></script>
-  <script src="listare.js?v=1.23"></script>
+  <script src="listare.js?v=1.28"></script>
   <script>
   // Punem codul direct aici ca să fim siguri că se execută v=1.27
     const SUPABASE_URL = "https://uymmflfhpeurfiigeivh.supabase.co";
@@ -15,14 +15,71 @@
   </script>
 
   <style>
-    body { font-family: Arial; margin: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #999; padding: 6px; font-size: 14px; }
-    th { background: #eee; }
+/* ====== TABEL GENERAL ====== */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+}
 
+th, td {
+    border: 1px solid #999;
+    padding: 6px;
+    font-size: 14px;
+}
 
+th {
+    background: #eee;
+}
 
-    fieldset.grup-selectie legend {
+/* ====== COLOANA SEL ====== */
+th[data-coloana="Sel"],
+td[data-coloana="Sel"] {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    text-align: center;
+}
+
+/* ====== NR P1 ====== */
+th[data-coloana="NrP1"],
+td[data-coloana="NrP1"] {
+    width: 55px;
+    min-width: 55px;
+    max-width: 55px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* ====== VAR ====== */
+th[data-coloana="Var"],
+td[data-coloana="Var"] {
+    width: 45px;
+    min-width: 45px;
+    max-width: 45px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* ====== DENUMIRE ====== */
+th[data-coloana="Denumire"],
+td[data-coloana="Denumire"] {
+    min-width: 250px;
+    max-width: 350px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ====== INPUT-URI DE FILTRARE ====== */
+.filter-row input {
+    width: 95%;
+    padding: 3px;
+    box-sizing: border-box;
+}
+
+/* ====== GRUP SELECTIE ====== */
+fieldset.grup-selectie legend {
     cursor: pointer;
     background: #e0e0e0;
     padding: 4px 10px;
@@ -31,7 +88,8 @@
     font-weight: bold;
     display: inline-block;
 }
-</style>
+
+ </style>
 </head>
 
 <body>
