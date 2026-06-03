@@ -59,6 +59,12 @@ function renderTable(rows, coloaneDeAfisat) {
     // ---------------------------------------------------------
     rows.forEach(r => {
         const tr = document.createElement("tr");
+    // Adăugăm atribute data-* pentru selecție
+        tr.dataset.nrp1 = r.NrP1;
+        tr.dataset.var = r.Var || "";
+        tr.dataset.denumire = r.Denumire || "";
+        tr.dataset.latit = r.Latit || "";
+        tr.dataset.long = r.Long || "";
 
         coloaneDeAfisat.forEach(numeColoana => {
             const td = document.createElement("td");
