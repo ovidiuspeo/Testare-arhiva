@@ -1,4 +1,4 @@
-// ------------ v1.27 -----------------------------------------
+// ------------ v1.28 -----------------------------------------
 // 1. Funcția care afișează tabelul (cu link-uri + filtrare) 
 // -------------------------------------------------------------
 function renderTable(rows, coloaneDeAfisat) {
@@ -14,7 +14,6 @@ function renderTable(rows, coloaneDeAfisat) {
         return;
     }
 
-    // Configurație pentru link-uri: Coloana -> Bucket
     const configMedia = {
         'num_alt': 'diverse',
         'num_foto': 'intrari',
@@ -24,23 +23,25 @@ function renderTable(rows, coloaneDeAfisat) {
     };
 
     // ---------------------------------------------------------
-    // 1.1. Generăm Header-ul
+    // 1.1. Header
     // ---------------------------------------------------------
 
-    // Coloana pentru selectare
+    // Coloana Sel
     const thSel = document.createElement("th");
     thSel.textContent = "Sel";
+    thSel.dataset.coloana = "Sel";   // v1.28
     theadRow.appendChild(thSel);
 
     // Coloanele permanente + cele selectate
     coloaneDeAfisat.forEach(numeColoana => {
         const th = document.createElement("th");
         th.textContent = numeColoana;
+        th.dataset.coloana = numeColoana;   // v1.28
         theadRow.appendChild(th);
     });
 
     // ---------------------------------------------------------
-    // 🔍 FILTRARE: Adăugăm un rând cu input-uri sub header
+    // Filtrare
     // ---------------------------------------------------------
     let filterRow = document.querySelector("#tabelPesteri thead tr.filter-row");
     if (filterRow) filterRow.remove();
@@ -48,11 +49,10 @@ function renderTable(rows, coloaneDeAfisat) {
     filterRow = document.createElement("tr");
     filterRow.classList.add("filter-row");
 
-    // Filtru pentru coloană Sel (gol)
+    // Filtru gol pentru Sel
     const thSelFilter = document.createElement("th");
     filterRow.appendChild(thSelFilter);
 
-    // Filtre pentru restul coloanelor
     coloaneDeAfisat.forEach(col => {
         const th = document.createElement("th");
         const input = document.createElement("input");
@@ -69,7 +69,7 @@ function renderTable(rows, coloaneDeAfisat) {
     thead.appendChild(filterRow);
 
     // ---------------------------------------------------------
-    // 1.2. Generăm Rândurile
+    // 1.2. Rânduri
     // ---------------------------------------------------------
     rows.forEach(r => {
         const tr = document.createElement("tr");
@@ -83,6 +83,7 @@ function renderTable(rows, coloaneDeAfisat) {
 
         // Checkbox selecție
         const tdSel = document.createElement("td");
+        tdSel.dataset.coloana = "Sel";   // v1.28
         const chk = document.createElement("input");
         chk.type = "checkbox";
         chk.classList.add("chkPestera");
@@ -92,6 +93,7 @@ function renderTable(rows, coloaneDeAfisat) {
         // Restul coloanelor
         coloaneDeAfisat.forEach(numeColoana => {
             const td = document.createElement("td");
+            td.dataset.coloana = numeColoana;   // v1.28
             const valoare = r[numeColoana] ?? "";
 
             if (configMedia[numeColoana] && valoare !== "") {
@@ -118,7 +120,7 @@ function renderTable(rows, coloaneDeAfisat) {
 }
 
 // -------------------------------------------------------------
-// 1.3. Funcția de filtrare pe coloane
+// 1.3. Filtrare
 // -------------------------------------------------------------
 function aplicaFiltre() {
     const tbody = document.querySelector("#tabelPesteri tbody");
@@ -133,8 +135,7 @@ function aplicaFiltre() {
         let vizibil = true;
 
         Array.from(row.cells).forEach((cell, index) => {
-            // index 0 = checkbox → nu filtrăm
-            if (index === 0) return;
+            if (index === 0) return; // Sel
 
             const colName = filtre[index - 1].dataset.col;
             const filtru = valoriFiltre[colName];
@@ -143,46 +144,31 @@ function aplicaFiltre() {
             const text = cell.innerText.toLowerCase();
             const numericCell = parseFloat(text);
 
-            // Interval numeric
             if (/^\d+\s*-\s*\d+$/.test(filtru)) {
                 const [min, max] = filtru.split("-").map(v => parseFloat(v));
-                if (isNaN(numericCell) || numericCell < min || numericCell > max) {
-                    vizibil = false;
-                }
+                if (isNaN(numericCell) || numericCell < min || numericCell > max) vizibil = false;
                 return;
             }
 
-            // Operatori > < >= <=
             if (/^(>=|<=|>|<)\s*\d+(\.\d+)?$/.test(filtru)) {
                 const op = filtru.match(/>=|<=|>|</)[0];
                 const val = parseFloat(filtru.replace(op, ""));
-
-                if (isNaN(numericCell)) {
-                    vizibil = false;
-                    return;
-                }
+                if (isNaN(numericCell)) { vizibil = false; return; }
 
                 if (op === ">"  && !(numericCell >  val)) vizibil = false;
                 if (op === "<"  && !(numericCell <  val)) vizibil = false;
                 if (op === ">=" && !(numericCell >= val)) vizibil = false;
                 if (op === "<=" && !(numericCell <= val)) vizibil = false;
-
                 return;
             }
 
-            // Egalitate numerică
             if (!isNaN(parseFloat(filtru))) {
                 const val = parseFloat(filtru);
-                if (isNaN(numericCell) || numericCell !== val) {
-                    vizibil = false;
-                }
+                if (isNaN(numericCell) || numericCell !== val) vizibil = false;
                 return;
             }
 
-            // Filtrare text
-            if (!text.includes(filtru)) {
-                vizibil = false;
-            }
+            if (!text.includes(filtru)) vizibil = false;
         });
 
         row.style.display = vizibil ? "" : "none";
@@ -190,7 +176,7 @@ function aplicaFiltre() {
 }
 
 // -------------------------------------------------------------
-// 1.4. Funcția care trimite selecția către hartă
+// 1.4. Trimite selecția către hartă
 // -------------------------------------------------------------
 function arataHartaSelectie() {
     const selectate = obtinePesteriSelectate();
@@ -201,12 +187,11 @@ function arataHartaSelectie() {
     }
 
     localStorage.setItem("selectiePesteri", JSON.stringify(selectate));
-
     location.href = "harta.html?mode=selectie";
 }
 
 // -------------------------------------------------------------
-// 1.5. Funcția care citește selecția din checkbox-uri
+// 1.5. Citește selecția
 // -------------------------------------------------------------
 function obtinePesteriSelectate() {
     const selectate = [];
@@ -230,7 +215,7 @@ function obtinePesteriSelectate() {
 }
 
 // -------------------------------------------------------------
-// 2. Funcția apelată de butonul "Caută"
+// 2. Caută
 // -------------------------------------------------------------
 async function loadBazin() {
     const cod = document.getElementById("bazin").value.trim();
@@ -244,9 +229,7 @@ async function loadBazin() {
     const coloaneVizibile = ['NrP1', 'Var', 'Denumire'];
 
     const checkboxuri = document.querySelectorAll('.coloana-db:checked');
-    checkboxuri.forEach(cb => {
-        coloaneVizibile.push(cb.value);
-    });
+    checkboxuri.forEach(cb => coloaneVizibile.push(cb.value));
 
     const coloaneDeCerut = Array.from(new Set(['CodB1', ...coloaneVizibile]));
     const listaSelect = coloaneDeCerut.map(c => `"${c}"`).join(',');
@@ -268,26 +251,21 @@ async function loadBazin() {
 }
 
 // -------------------------------------------------------------
-// 3. Selectie toate coloanele
+// 3. Selectează toate coloanele
 // -------------------------------------------------------------
 function toggleToateColoanele() {
     const checkboxuri = document.querySelectorAll('.coloana-db');
     const oricareBifat = Array.from(checkboxuri).some(cb => cb.checked);
-
-    checkboxuri.forEach(cb => {
-        cb.checked = !oricareBifat;
-    });
+    checkboxuri.forEach(cb => cb.checked = !oricareBifat);
 }
 
 // -------------------------------------------------------------
-// 4. Selectie / Deselectie pe grupe
+// 4. Selectează / deselectează pe grupe
 // -------------------------------------------------------------
 function toggleGrupa(numeGrupa) {
     const fieldset = document.querySelector(`fieldset[data-grupa="${numeGrupa}"]`);
     const checkboxuri = fieldset.querySelectorAll('input[type="checkbox"]');
-
     const oricareBifat = Array.from(checkboxuri).some(cb => cb.checked);
-
     checkboxuri.forEach(cb => cb.checked = !oricareBifat);
 }
 
@@ -297,6 +275,5 @@ function toggleGrupa(numeGrupa) {
 function resetFiltre() {
     const filtre = document.querySelectorAll(".filter-row input");
     filtre.forEach(f => f.value = "");
-
     aplicaFiltre();
 }
