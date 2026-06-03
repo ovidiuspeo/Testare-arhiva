@@ -29,18 +29,16 @@ table {
     width: 100%;
     margin-top: 20px;
 }
-
 th, td {
     border: 1px solid #999;
     padding: 6px;
     font-size: 14px;
 }
-
 th {
     background: #eee;
 }
 
-/* ====== COLOANA SEL ====== */
+/* Latimi coloane */
 th[data-coloana="Sel"],
 td[data-coloana="Sel"] {
     width: 30px;
@@ -49,7 +47,6 @@ td[data-coloana="Sel"] {
     text-align: center;
 }
 
-/* ====== NR P1 ====== */
 th[data-coloana="NrP1"],
 td[data-coloana="NrP1"] {
     width: 40px;
@@ -59,7 +56,6 @@ td[data-coloana="NrP1"] {
     white-space: nowrap;
 }
 
-/* ====== VAR ====== */
 th[data-coloana="Var"],
 td[data-coloana="Var"] {
     width: 45px;
@@ -69,16 +65,62 @@ td[data-coloana="Var"] {
     white-space: nowrap;
 }
 
-/* ====== DENUMIRE ====== */
 th[data-coloana="Denumire"],
 td[data-coloana="Denumire"] {
     min-width: 250px;
-    max-width: 350px;
+    max-width: 320px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
+th[data-coloana="SinList"],
+td[data-coloana="SinList"] {
+    min-width: 100px;
+    max-width: 320px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+th[data-coloana="Afluent"],
+td[data-coloana="Afluent"] {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+    white-space: nowrap;
+}
+th[data-coloana="Munte"],
+td[data-coloana="Munte"] {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+    white-space: nowrap;
+}
+th[data-coloana="Autor"],
+td[data-coloana="Autor"] {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+    white-space: nowrap;
+}
+th[data-coloana="Club"],
+td[data-coloana="Club"] {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+    white-space: nowrap;
+}
+th[data-coloana="Redactor"],
+td[data-coloana="Redactor"] {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+    white-space: nowrap;
+}
 /* ====== INPUT-URI DE FILTRARE ====== */
 .filter-row input {
     width: 95%;
