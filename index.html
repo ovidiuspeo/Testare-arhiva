@@ -22,43 +22,25 @@
 
     #tabelPesteri th:nth-child(1),
     #tabelPesteri td:nth-child(1) {
-    width: 40px;      /* Sel */
-    text-align: center;
-    /* ================================
-       1. Coloana NrP1 (NrP)
-       ================================ */
+        width: 40px;      /* Sel */
+        text-align: center;
+    }
+    
     #tabelPesteri th:nth-child(2),
     #tabelPesteri td:nth-child(2) {
-        width: 40px;
-        min-width: 40px;
-        max-width: 40px;
-        text-align: center;
-        white-space: nowrap;
+        width: 50px;      /* NrP1 */
     }
-
-    /* ================================
-       2. Coloana Var
-       ================================ */
+    
     #tabelPesteri th:nth-child(3),
     #tabelPesteri td:nth-child(3) {
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
-        text-align: center;
-        white-space: nowrap;
+        width: 40px;      /* Var */
     }
-
-    /* ================================
-       3. Coloana Denumire
-       ================================ */
+    
     #tabelPesteri th:nth-child(4),
     #tabelPesteri td:nth-child(4) {
-        min-width: 150px;     /* ajustezi după test */
-        max-width: 350px;     /* limitează pe ecrane mari */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        width: 300px;     /* Denumire */
     }
+
 
     fieldset.grup-selectie legend {
     cursor: pointer;
