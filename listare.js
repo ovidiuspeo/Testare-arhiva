@@ -1,5 +1,5 @@
-// -------------------------------------------------------------
-// 1. Funcția care afișează tabelul (cu link-uri + filtrare) v1.23
+// ------------ v1.26 -----------------------------------------
+// 1. Funcția care afișează tabelul (cu link-uri + filtrare) 
 // -------------------------------------------------------------
 function renderTable(rows, coloaneDeAfisat) {
     const thead = document.querySelector("#tabelPesteri thead");
@@ -162,6 +162,45 @@ function aplicaFiltre() {
 
         row.style.display = vizibil ? "" : "none";
     });
+}
+
+function arataHartaSelectie() {
+    // Funcția ta existentă care returnează lista de peșteri selectate
+    const selectate = obtinePesteriSelectate();
+
+    if (!selectate || selectate.length === 0) {
+        alert("Nu ai selectat nicio peșteră.");
+        return;
+    }
+
+    // Salvăm selecția în localStorage
+    localStorage.setItem("selectiePesteri", JSON.stringify(selectate));
+
+    // Mergem în modul selecție
+    location.href = "harta.html?mode=selectie";
+}
+
+function obtinePesteriSelectate() {
+    const selectate = [];
+
+    // Selectăm toate rândurile bifate
+    const checkboxes = document.querySelectorAll(".chkPestera:checked");
+
+    checkboxes.forEach(chk => {
+        const tr = chk.closest("tr");
+
+        const r = {
+            NrP1: tr.dataset.nrp1,
+            Var: tr.dataset.var || "",
+            Denumire: tr.dataset.denumire,
+            Latit: tr.dataset.latit ? parseFloat(tr.dataset.latit) : null,
+            Long: tr.dataset.long ? parseFloat(tr.dataset.long) : null
+        };
+
+        selectate.push(r);
+    });
+
+    return selectate;
 }
 
 // -------------------------------------------------------------
