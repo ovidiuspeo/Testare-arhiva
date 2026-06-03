@@ -117,10 +117,13 @@ function renderTable(rows, coloaneDeAfisat) {
 
         tbody.appendChild(tr);
     });
+// ---------------------------------------------------------
+    // v1.29 — Bifează automat toate rândurile după afișare
+    // ---------------------------------------------------------
+    document.querySelectorAll(".chkPestera").forEach(chk => chk.checked = true);    
 }
-
 // -------------------------------------------------------------
-// 1.3. Filtrare
+// 1.3. Filtrare (v1.29 cu auto-selectare a rândurilor vizibile)
 // -------------------------------------------------------------
 function aplicaFiltre() {
     const tbody = document.querySelector("#tabelPesteri tbody");
@@ -144,12 +147,14 @@ function aplicaFiltre() {
             const text = cell.innerText.toLowerCase();
             const numericCell = parseFloat(text);
 
+            // Interval numeric
             if (/^\d+\s*-\s*\d+$/.test(filtru)) {
                 const [min, max] = filtru.split("-").map(v => parseFloat(v));
                 if (isNaN(numericCell) || numericCell < min || numericCell > max) vizibil = false;
                 return;
             }
 
+            // Operatori > < >= <=
             if (/^(>=|<=|>|<)\s*\d+(\.\d+)?$/.test(filtru)) {
                 const op = filtru.match(/>=|<=|>|</)[0];
                 const val = parseFloat(filtru.replace(op, ""));
@@ -162,16 +167,27 @@ function aplicaFiltre() {
                 return;
             }
 
+            // Egalitate numerică
             if (!isNaN(parseFloat(filtru))) {
                 const val = parseFloat(filtru);
                 if (isNaN(numericCell) || numericCell !== val) vizibil = false;
                 return;
             }
 
+            // Filtrare text
             if (!text.includes(filtru)) vizibil = false;
         });
 
+        // Aplicăm vizibilitatea
         row.style.display = vizibil ? "" : "none";
+
+        // ---------------------------------------------------------
+        // v1.29 — Auto-selectare DOAR pentru rândurile vizibile
+        // ---------------------------------------------------------
+        const chk = row.querySelector(".chkPestera");
+        if (chk) {
+            chk.checked = vizibil;   // bifează dacă e vizibil, debifează dacă e ascuns
+        }
     });
 }
 
