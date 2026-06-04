@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<!-- ============================
+     harta.html — Versiunea 1.30
+     ============================ -->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
@@ -100,17 +103,35 @@ const markers = [];
 const tbody = document.querySelector("#lista tbody");
 tbody.innerHTML = "";
 
-selectie.forEach((p, index) => {
+selectie.forEach((p) => {
+
+    // determinăm culoarea biluței
+    let culoare = "red"; // implicit: fără coordonate
+
+    if (p.Latit && p.Long) {
+        culoare = "green"; // coordonate precise
+        // aici vom pune galben pentru coordonate aproximative (mai târziu)
+    }
+
     // tabel
     const tr = document.createElement("tr");
     tr.innerHTML = `
         <td>${p.NrP1}</td>
         <td>${p.Denumire}</td>
-        <td>${p.Latit}, ${p.Long}</td>
+        <td style="text-align:center;">
+            <span style="
+                display:inline-block;
+                width:14px;
+                height:14px;
+                border-radius:50%;
+                background:${culoare};
+                border:1px solid #555;
+            "></span>
+        </td>
     `;
     tbody.appendChild(tr);
 
-    // marker
+    // marker pe hartă
     if (p.Latit && p.Long) {
         const m = L.marker([p.Latit, p.Long]).addTo(map);
         m.bindPopup(`<b>${p.Denumire}</b><br>Nr: ${p.NrP1}`);
