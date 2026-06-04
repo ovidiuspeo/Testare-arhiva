@@ -1,4 +1,4 @@
-// ------------ v1.28 -----------------------------------------
+// ------------ v1.29 -----------------------------------------
 // 1. Funcția care afișează tabelul (cu link-uri + filtrare) 
 // -------------------------------------------------------------
 function renderTable(rows, coloaneDeAfisat) {
@@ -247,7 +247,12 @@ async function loadBazin() {
     const checkboxuri = document.querySelectorAll('.coloana-db:checked');
     checkboxuri.forEach(cb => coloaneVizibile.push(cb.value));
 
-    const coloaneDeCerut = Array.from(new Set(['CodB1', ...coloaneVizibile]));
+    const coloaneDeCerut = Array.from(new Set([
+    'CodB1',
+    'Latit',
+    'Long',
+    ...coloaneVizibile]));
+    
     const listaSelect = coloaneDeCerut.map(c => `"${c}"`).join(',');
 
     const { data, error } = await window.db_supa
