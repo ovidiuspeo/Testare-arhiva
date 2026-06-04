@@ -75,6 +75,7 @@ function renderTable(rows, coloaneDeAfisat) {
         const tr = document.createElement("tr");
 
         // Atribute necesare pentru selecție
+        tr.dataset.codb1 = r.CodB1 || "";
         tr.dataset.nrp1 = r.NrP1;
         tr.dataset.var = r.Var || "";
         tr.dataset.denumire = r.Denumire || "";
@@ -217,6 +218,7 @@ function obtinePesteriSelectate() {
         const tr = chk.closest("tr");
 
         const r = {
+            CodB1: tr.dataset.codb1,
             NrP1: tr.dataset.nrp1,
             Var: tr.dataset.var || "",
             Denumire: tr.dataset.denumire,
