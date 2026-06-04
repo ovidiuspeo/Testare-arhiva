@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.30
+     harta.html — Versiunea 1.31
      ============================ -->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
 <title>Harta – Selecție Peșteri</title>
 
-<!-- PATCH: unifică localStorage între index.html și harta.html -->
+<!-- Unifică localStorage între index.html și harta.html -->
 <base href="/Testare-arhiva/">
 
 <style>
@@ -61,7 +61,7 @@
 <div id="map"></div>
 
 <div id="sidebar">
-  <div id="title">Peșteri selectate</div>
+  <div id="title">Bazinul – <span id="codB1Title"></span></div>
 
   <button onclick="location.href='index.html'" 
           style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
@@ -85,6 +85,10 @@
 // 1. Citim selecția trimisă din index.html
 // -------------------------------------------------------------
 const selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
+
+// Extragem CodB1 (toate peșterile din selecție au același CodB1)
+const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
+document.getElementById("codB1Title").textContent = codB1;
 
 // -------------------------------------------------------------
 // 2. Inițializăm harta
@@ -110,7 +114,6 @@ selectie.forEach((p) => {
 
     if (p.Latit && p.Long) {
         culoare = "green"; // coordonate precise
-        // aici vom pune galben pentru coordonate aproximative (mai târziu)
     }
 
     // tabel
@@ -134,7 +137,14 @@ selectie.forEach((p) => {
     // marker pe hartă
     if (p.Latit && p.Long) {
         const m = L.marker([p.Latit, p.Long]).addTo(map);
-        m.bindPopup(`<b>${p.Denumire}</b><br>Nr: ${p.NrP1}`);
+        m.bindPopup(`
+            <div style="font-size:14px; line-height:1.3;">
+                <b>${p.CodB1}/${p.NrP1}</b><br>
+                ${p.Denumire}<br>
+                Lat: ${p.Latit}<br>
+                Long: ${p.Long}
+            </div>
+        `);
         markers.push(m);
     }
 });
