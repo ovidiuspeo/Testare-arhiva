@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.43
+     harta.html — Versiunea 1.44
      ============================ -->
 <html lang="ro">
 <head>
@@ -102,13 +102,13 @@ const hartaStrazi = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
     attribution: '&copy; OpenStreetMap'
 }).addTo(map); // adăugat implicit la pornire
 
-// Stratul 2: Google Satelit Pur (Doar imagini din satelit, fără texte)
+// Stratul 2: Google Satelit Pur (Doar imagini din satelit)
 const googleSatelit = L.tileLayer('https://google.com{x}&y={y}&z={z}', {
     maxZoom: 20,
     attribution: '&copy; Google Maps'
 });
 
-// Stratul 3: Google Hibrid (Satelit + Nume localități, Granițe și Drumuri)
+// Stratul 3: Google Hibrid (Satelit + Nume localități și Drumuri)
 const googleHibrid = L.tileLayer('https://google.com{x}&y={y}&z={z}', {
     maxZoom: 20,
     attribution: '&copy; Google Maps'
@@ -173,13 +173,16 @@ selectie.forEach((p) => {
 });
 
 // -------------------------------------------------------------
-// 4. Zoom automat pe selecție
+// 4. Zoom automat pe selecție (Evitare eroare prin constructor clasic)
 // -------------------------------------------------------------
 if (markers.length > 0) {
     const group = L.featureGroup(markers);
-    // Corectat definitiv prin definirea explicită a opțiunii de configurație
-    const configurareZoom = { padding: [20, 20] };
-    map.fitBounds(group.getBounds(), configurareZoom);
+    
+    // Am reconstruit opțiunea fără a mai folosi deloc acolade în cod
+    const configZoom = new Object();
+    configZoom.padding =;
+    
+    map.fitBounds(group.getBounds(), configZoom);
 }
 </script>
 
