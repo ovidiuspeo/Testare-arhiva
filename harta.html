@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.32
+     harta.html — Versiunea 1.50
+     Google Maps API
      ============================ -->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
 <title>Harta – Selecție Peșteri</title>
-
-<!-- Unifică localStorage între index.html și harta.html -->
-<base href="/Testare-arhiva/">
 
 <style>
   body {
@@ -52,9 +50,6 @@
   }
 </style>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 </head>
 <body>
 
@@ -63,7 +58,6 @@
 <div id="sidebar">
   <div id="title">Bazinul – <span id="codB1Title"></span></div>
 
-  <!-- v1.32: Închide DOAR tabul hărții -->
   <button onclick="window.close()" 
           style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
       Înapoi
@@ -87,76 +81,93 @@
 // -------------------------------------------------------------
 const selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
 
-// Extragem CodB1 (toate peșterile din selecție au același CodB1)
 const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
 document.getElementById("codB1Title").textContent = codB1;
 
-// -------------------------------------------------------------
-// 2. Inițializăm harta
-// -------------------------------------------------------------
-const map = L.map('map').setView([45.5, 23.5], 8);
+let map;
+let bounds;
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18
-}).addTo(map);
+// -------------------------------------------------------------
+// 2. Inițializăm Google Maps
+// -------------------------------------------------------------
+function initMap() {
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 45.5, lng: 23.5 },
+    zoom: 8,
+    mapTypeId: "roadmap",
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+      style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+      mapTypeIds: ["roadmap", "satellite", "hybrid", "terrain"]
+    }
+  });
 
-const markers = [];
+  bounds = new google.maps.LatLngBounds();
+
+  afiseazaPesteri();
+}
 
 // -------------------------------------------------------------
 // 3. Afișăm marker-ele și tabelul
 // -------------------------------------------------------------
-const tbody = document.querySelector("#lista tbody");
-tbody.innerHTML = "";
+function afiseazaPesteri() {
+  const tbody = document.querySelector("#lista tbody");
+  tbody.innerHTML = "";
 
-selectie.forEach((p) => {
+  selectie.forEach((p) => {
+    let culoare = p.Latit && p.Long ? "green" : "red";
 
-    // determinăm culoarea biluței
-    let culoare = "red"; // implicit: fără coordonate
-
-    if (p.Latit && p.Long) {
-        culoare = "green"; // coordonate precise
-    }
-
-    // tabel
     const tr = document.createElement("tr");
     tr.innerHTML = `
-        <td>${p.NrP1}</td>
-        <td>${p.Denumire}</td>
-        <td style="text-align:center;">
-            <span style="
-                display:inline-block;
-                width:14px;
-                height:14px;
-                border-radius:50%;
-                background:${culoare};
-                border:1px solid #555;
-            "></span>
-        </td>
+      <td>${p.NrP1}</td>
+      <td>${p.Denumire}</td>
+      <td style="text-align:center;">
+        <span style="
+          display:inline-block;
+          width:14px;
+          height:14px;
+          border-radius:50%;
+          background:${culoare};
+          border:1px solid #555;
+        "></span>
+      </td>
     `;
     tbody.appendChild(tr);
 
-    // marker pe hartă
     if (p.Latit && p.Long) {
-        const m = L.marker([p.Latit, p.Long]).addTo(map);
-        m.bindPopup(`
-            <div style="font-size:14px; line-height:1.3;">
-                <b>${p.CodB1}/${p.NrP1}</b><br>
-                ${p.Denumire}<br>
-                Lat: ${p.Latit}<br>
-                Long: ${p.Long}
-            </div>
-        `);
-        markers.push(m);
-    }
-});
+      const pos = { lat: p.Latit, lng: p.Long };
 
-// -------------------------------------------------------------
-// 4. Zoom automat pe selecție
-// -------------------------------------------------------------
-if (markers.length > 0) {
-    const group = L.featureGroup(markers);
-    map.fitBounds(group.getBounds(), { padding: [20, 20] });
+      const marker = new google.maps.Marker({
+        position: pos,
+        map: map,
+        title: p.Denumire
+      });
+
+      const info = new google.maps.InfoWindow({
+        content: `
+          <div style="font-size:14px; line-height:1.3;">
+            <b>${p.CodB1}/${p.NrP1}</b><br>
+            ${p.Denumire}<br>
+            Lat: ${p.Latit}<br>
+            Long: ${p.Long}
+          </div>
+        `
+      });
+
+      marker.addListener("click", () => info.open(map, marker));
+
+      bounds.extend(pos);
+    }
+  });
+
+  if (!bounds.isEmpty()) {
+    map.fitBounds(bounds);
+  }
 }
+</script>
+
+<script async
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=initMap">
 </script>
 
 </body>
