@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.37
+     harta.html — Versiunea 1.38
      ============================ -->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
 <title>Harta – Selecție Peșteri</title>
-
-<!-- Fără <base> pentru compatibilitate Leaflet -->
 
 <style>
   body {
@@ -43,8 +41,8 @@
   }
 </style>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com" />
+<script src="https://unpkg.com"></script>
 </head>
 <body>
 
@@ -77,26 +75,29 @@ document.getElementById("codB1Title").textContent = codB1;
 // -------------------------------------------------------------
 const map = L.map('map').setView([45.5, 23.5], 8);
 
-// === Layer 1: OpenStreetMap ===
+// === Layer 1: OpenStreetMap (Harta standard cu străzi) ===
 const osmLayer = L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  { maxZoom: 19 }
-).addTo(map);
+  { 
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
+  }
+).addTo(map); // Adăugat implicit la pornire
 
-// === Layer 2: OpenAerialMap (imagini satelit reale) ===
-const oamSat = L.tileLayer(
-  'https://tiles.openaerialmap.org/tiles/{z}/{x}/{y}.png',
+// === Layer 2: Esri Satellite (Imagini satelit reale globale) ===
+const esriSat = L.tileLayer(
+  'https://arcgisonline.com{z}/{y}/{x}',
   {
     maxZoom: 19,
-    attribution: 'Imagery © OpenAerialMap'
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, GeoEye, Getmapping, Aerogrid, IGN, IGP'
   }
 );
 
-// === Control de layer-e ===
+// === Control de layer-e (Butonul din dreapta sus pentru schimbare) ===
 L.control.layers(
   {
-    "Străzi (OSM)": osmLayer,
-    "Satelit (OAM)": oamSat
+    "Harta Străzi (OSM)": osmLayer,
+    "Satelit Real (Esri)": esriSat
   }
 ).addTo(map);
 
