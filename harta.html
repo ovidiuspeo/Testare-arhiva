@@ -103,7 +103,7 @@ const osmLayer = L.tileLayer(
 // === Layer 2: ESRI World Imagery (satelit global) ===
 // IMPORTANT: funcționează corect doar dacă <base> este eliminat
 const esriSat = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}',
+  'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}',
   {
     maxZoom: 19,
     attribution: 'Tiles © Esri'
