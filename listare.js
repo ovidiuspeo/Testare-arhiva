@@ -1,4 +1,4 @@
-// ------------ v1.31 -----------------------------------------
+// ------------ v1.32 -----------------------------------------
 // 1. Funcția care afișează tabelul (cu link-uri + filtrare) 
 // -------------------------------------------------------------
 function renderTable(rows, coloaneDeAfisat) {
@@ -29,14 +29,14 @@ function renderTable(rows, coloaneDeAfisat) {
     // Coloana Sel
     const thSel = document.createElement("th");
     thSel.textContent = "Sel";
-    thSel.dataset.coloana = "Sel";   // v1.28
+    thSel.dataset.coloana = "Sel";
     theadRow.appendChild(thSel);
 
     // Coloanele permanente + cele selectate
     coloaneDeAfisat.forEach(numeColoana => {
         const th = document.createElement("th");
         th.textContent = numeColoana;
-        th.dataset.coloana = numeColoana;   // v1.28
+        th.dataset.coloana = numeColoana;
         theadRow.appendChild(th);
     });
 
@@ -84,7 +84,7 @@ function renderTable(rows, coloaneDeAfisat) {
 
         // Checkbox selecție
         const tdSel = document.createElement("td");
-        tdSel.dataset.coloana = "Sel";   // v1.28
+        tdSel.dataset.coloana = "Sel";
         const chk = document.createElement("input");
         chk.type = "checkbox";
         chk.classList.add("chkPestera");
@@ -94,7 +94,7 @@ function renderTable(rows, coloaneDeAfisat) {
         // Restul coloanelor
         coloaneDeAfisat.forEach(numeColoana => {
             const td = document.createElement("td");
-            td.dataset.coloana = numeColoana;   // v1.28
+            td.dataset.coloana = numeColoana;
             const valoare = r[numeColoana] ?? "";
 
             if (configMedia[numeColoana] && valoare !== "") {
@@ -118,11 +118,13 @@ function renderTable(rows, coloaneDeAfisat) {
 
         tbody.appendChild(tr);
     });
-// ---------------------------------------------------------
+
+    // ---------------------------------------------------------
     // v1.29 — Bifează automat toate rândurile după afișare
     // ---------------------------------------------------------
-    document.querySelectorAll(".chkPestera").forEach(chk => chk.checked = true);    
+    document.querySelectorAll(".chkPestera").forEach(chk => chk.checked = true);
 }
+
 // -------------------------------------------------------------
 // 1.3. Filtrare (v1.29 cu auto-selectare a rândurilor vizibile)
 // -------------------------------------------------------------
@@ -182,18 +184,14 @@ function aplicaFiltre() {
         // Aplicăm vizibilitatea
         row.style.display = vizibil ? "" : "none";
 
-        // ---------------------------------------------------------
-        // v1.29 — Auto-selectare DOAR pentru rândurile vizibile
-        // ---------------------------------------------------------
+        // Auto-selectare DOAR pentru rândurile vizibile
         const chk = row.querySelector(".chkPestera");
-        if (chk) {
-            chk.checked = vizibil;   // bifează dacă e vizibil, debifează dacă e ascuns
-        }
+        if (chk) chk.checked = vizibil;
     });
 }
 
 // -------------------------------------------------------------
-// 1.4. Trimite selecția către hartă
+// 1.4. Trimite selecția către hartă (TAB NOU) — v1.32
 // -------------------------------------------------------------
 function arataHartaSelectie() {
     const selectate = obtinePesteriSelectate();
@@ -203,8 +201,11 @@ function arataHartaSelectie() {
         return;
     }
 
+    // Salvăm selecția pentru hartă
     localStorage.setItem("selectiePesteri", JSON.stringify(selectate));
-    location.href = "harta.html?mode=selectie";
+
+    // Deschidem harta într-un TAB NOU
+    window.open("harta.html?mode=selectie", "_blank");
 }
 
 // -------------------------------------------------------------
@@ -250,11 +251,12 @@ async function loadBazin() {
     checkboxuri.forEach(cb => coloaneVizibile.push(cb.value));
 
     const coloaneDeCerut = Array.from(new Set([
-    'CodB1',
-    'Latit',
-    'Long',
-    ...coloaneVizibile]));
-    
+        'CodB1',
+        'Latit',
+        'Long',
+        ...coloaneVizibile
+    ]));
+
     const listaSelect = coloaneDeCerut.map(c => `"${c}"`).join(',');
 
     const { data, error } = await window.db_supa
