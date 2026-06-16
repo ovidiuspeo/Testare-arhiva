@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.44
+     harta.html — Versiunea 1.49
      ============================ -->
 <html lang="ro">
 <head>
@@ -52,8 +52,8 @@
   }
 </style>
 
-<link rel="stylesheet" href="https://unpkg.com" />
-<script src="https://unpkg.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 </head>
 <body>
@@ -92,37 +92,26 @@ const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
 document.getElementById("codB1Title").textContent = codB1;
 
 // -------------------------------------------------------------
-// 2. Inițializăm harta
+// 2. Inițializăm harta și straturile
 // -------------------------------------------------------------
-const map = L.map('map').setView([45.5, 23.5], 8);
+var map = L.map('map').setView([45.5, 23.5], 8);
 
-// Stratul 1: Harta standard cu străzi (OSM)
-const hartaStrazi = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '&copy; OpenStreetMap'
-}).addTo(map); // adăugat implicit la pornire
+// Stratul standard
+var străzi = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18
+}).addTo(map);
 
-// Stratul 2: Google Satelit Pur (Doar imagini din satelit)
-const googleSatelit = L.tileLayer('https://google.com{x}&y={y}&z={z}', {
-    maxZoom: 20,
-    attribution: '&copy; Google Maps'
+// Stratul satelit de la Google Maps
+var satelit = L.tileLayer('https://google.com{x}&y={y}&z={z}', {
+    maxZoom: 20
 });
 
-// Stratul 3: Google Hibrid (Satelit + Nume localități și Drumuri)
-const googleHibrid = L.tileLayer('https://google.com{x}&y={y}&z={z}', {
-    maxZoom: 20,
-    attribution: '&copy; Google Maps'
-});
-
-// Adăugăm selectorul de straturi în colțul din dreapta-sus
-const straturiDeBaza = {
-    "Hartă Străzi (OSM)": hartaStrazi,
-    "Satelit (Google)": googleSatelit,
-    "Hibrid (Satelit + Drumuri)": googleHibrid
+// Selectorul din colțul hărții
+var straturiBază = {
+    "Hartă Străzi": străzi,
+    "Satelit Google": satelit
 };
-L.control.layers(straturiDeBaza).addTo(map);
-
-const markers = [];
+L.control.layers(straturiBază).addTo(map);
 
 // -------------------------------------------------------------
 // 3. Afișăm marker-ele și tabelul
@@ -173,16 +162,11 @@ selectie.forEach((p) => {
 });
 
 // -------------------------------------------------------------
-// 4. Zoom automat pe selecție (Evitare eroare prin constructor clasic)
+// 4. Zoom automat pe selecție
 // -------------------------------------------------------------
 if (markers.length > 0) {
     const group = L.featureGroup(markers);
-    
-    // Am reconstruit opțiunea fără a mai folosi deloc acolade în cod
-    const configZoom = new Object();
-    configZoom.padding =;
-    
-    map.fitBounds(group.getBounds(), configZoom);
+    map.fitBounds(group.getBounds(), { padding: [20, 20] });
 }
 </script>
 
