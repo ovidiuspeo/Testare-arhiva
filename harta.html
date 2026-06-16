@@ -95,10 +95,18 @@ const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
 document.getElementById("codB1Title").textContent = codB1;
 
 // -------------------------------------------------------------
-// 2. Inițializăm harta
+// 2. Inițializam harta
 // -------------------------------------------------------------
 const map = L.map('map').setView([45.5, 23.5], 8);
 
+// Scala
+L.control.scale({
+    metric: true,      // afișează metri / kilometri
+    imperial: false,   // nu afișează mile
+    maxWidth: 150      // lățimea scalei
+}).addTo(map);
+
+// Masurare distante
 L.control.measure({
     primaryLengthUnit: 'meters', // masurare
     secondaryLengthUnit: 'kilometers',
@@ -106,13 +114,6 @@ L.control.measure({
     secondaryAreaUnit: 'hectares',
     activeColor: '#ff0000',
     completedColor: '#00aa00'
-}).addTo(map);
-
-
-L.control.scale({
-    metric: true,      // afișează metri / kilometri
-    imperial: false,   // nu afișează mile
-    maxWidth: 150      // lățimea scalei
 }).addTo(map);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
