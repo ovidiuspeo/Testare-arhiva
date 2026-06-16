@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.41
+     harta.html — Versiunea 1.42
      ============================ -->
 <html lang="ro">
 <head>
@@ -52,8 +52,8 @@
   }
 </style>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com" />
+<script src="https://unpkg.com"></script>
 
 </head>
 <body>
@@ -102,16 +102,23 @@ const hartaStrazi = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.
     attribution: '&copy; OpenStreetMap'
 }).addTo(map); // adăugat implicit la pornire
 
-// Stratul 2: Satelit Real (Esri World Imagery)
-const hartaSatelit = L.tileLayer('https://arcgisonline.com{z}/{y}/{x}', {
-    maxZoom: 18,
-    attribution: 'Tiles &copy; Esri &mdash; Sursa: Esri, i-cubed, USDA, USGS, GeoEye, Getmapping, Aerogrid, IGN'
+// Stratul 2: Google Satelit Pur (Doar imagini din satelit, fără texte)
+const googleSatelit = L.tileLayer('https://google.com{x}&y={y}&z={z}', {
+    maxZoom: 20,
+    attribution: '&copy; Google Maps'
+});
+
+// Stratul 3: Google Hibrid (Satelit + Nume localități, Granițe și Drumuri)
+const googleHibrid = L.tileLayer('https://google.com{x}&y={y}&z={z}', {
+    maxZoom: 20,
+    attribution: '&copy; Google Maps'
 });
 
 // Adăugăm selectorul de straturi în colțul din dreapta-sus
 const straturiDeBaza = {
-    "Hartă Străzi": hartaStrazi,
-    "Satelit": hartaSatelit
+    "Hartă Străzi (OSM)": hartaStrazi,
+    "Satelit (Google)": googleSatelit,
+    "Hibrid (Satelit + Drumuri)": googleHibrid
 };
 L.control.layers(straturiDeBaza).addTo(map);
 
