@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.42
+     harta.html — Versiunea 1.43
      ============================ -->
 <html lang="ro">
 <head>
@@ -177,7 +177,9 @@ selectie.forEach((p) => {
 // -------------------------------------------------------------
 if (markers.length > 0) {
     const group = L.featureGroup(markers);
-    map.fitBounds(group.getBounds(), { padding: [20, 20] });
+    // Corectat definitiv prin definirea explicită a opțiunii de configurație
+    const configurareZoom = { padding: [20, 20] };
+    map.fitBounds(group.getBounds(), configurareZoom);
 }
 </script>
 
