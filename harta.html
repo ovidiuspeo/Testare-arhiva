@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.35
+     harta.html — Versiunea 1.36
      ============================ -->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<title>Harta – Selecție Peșteri</title>
+<title>Harta – Selectie Pesteri</title>
 
-<!-- Unifică localStorage între index.html și harta.html -->
+<!-- Unifica localStorage intre index.html si harta.html -->
 <base href="/Testare-arhiva/">
 
 <style>
@@ -66,10 +66,10 @@
 <div id="sidebar">
   <div id="title">Bazinul – <span id="codB1Title"></span></div>
 
-  <!-- v1.32: Închide DOAR tabul hărții -->
+  <!-- v1.32: Inchide DOAR tabul hartii -->
   <button onclick="window.close()" 
           style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
-      Înapoi
+      Inapoi
   </button>
 
   <table id="lista">
@@ -86,38 +86,34 @@
 
 <script>
 // -------------------------------------------------------------
-// 1. Citim selecția trimisă din index.html
+// 1. Citim selectia trimisa din index.html
 // -------------------------------------------------------------
 const selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
 
-// Extragem CodB1 (toate peșterile din selecție au același CodB1)
+// Extragem CodB1 (toate pesterile din selectie au acelasi CodB1)
 const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
 document.getElementById("codB1Title").textContent = codB1;
 
 // -------------------------------------------------------------
-// 2. Inițializam harta
+// 2. Initializam harta
 // -------------------------------------------------------------
 const map = L.map('map').setView([45.5, 23.5], 8);
 
-// Scala
+// Add scale control (km / meters)
 L.control.scale({
-    metric: true,      // afișează metri / kilometri
-    imperial: false,   // nu afișează mile
-    maxWidth: 150      // lățimea scalei
+    metric: true,
+    imperial: false,
+    maxWidth: 150
 }).addTo(map);
 
-// Masurare distante
+// Add distance measurement tool
 L.control.measure({
-    primaryLengthUnit: 'meters', // masurare
+    primaryLengthUnit: 'meters',
     secondaryLengthUnit: 'kilometers',
     primaryAreaUnit: 'sqmeters',
     secondaryAreaUnit: 'hectares',
     activeColor: '#ff0000',
     completedColor: '#00aa00'
-}).addTo(map);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18
 }).addTo(map);
 
 // Layer OSM (implicit)
@@ -132,7 +128,7 @@ const esriSat = L.tileLayer(
   { maxZoom: 19 }
 );
 
-// Control de layer-e (comutator)
+// Control de layere (comutator)
 const baseLayers = {
   "Harta OSM": osm,
   "Satelit ESRI": esriSat
@@ -143,15 +139,15 @@ L.control.layers(baseLayers).addTo(map);
 const markers = [];
 
 // -------------------------------------------------------------
-// 3. Afișăm marker-ele și tabelul
+// 3. Afisam marker-ele si tabelul
 // -------------------------------------------------------------
 const tbody = document.querySelector("#lista tbody");
 tbody.innerHTML = "";
 
 selectie.forEach((p) => {
 
-    // determinăm culoarea biluței
-    let culoare = "red"; // implicit: fără coordonate
+    // determinam culoarea bulinei
+    let culoare = "red"; // implicit: fara coordonate
 
     if (p.Latit && p.Long) {
         culoare = "green"; // coordonate precise
@@ -175,7 +171,7 @@ selectie.forEach((p) => {
     `;
     tbody.appendChild(tr);
 
-    // marker pe hartă
+    // marker pe harta
     if (p.Latit && p.Long) {
         const m = L.marker([p.Latit, p.Long]).addTo(map);
         m.bindPopup(`
@@ -191,7 +187,7 @@ selectie.forEach((p) => {
 });
 
 // -------------------------------------------------------------
-// 4. Zoom automat pe selecție
+// 4. Zoom automat pe selectie
 // -------------------------------------------------------------
 if (markers.length > 0) {
     const group = L.featureGroup(markers);
