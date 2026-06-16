@@ -1,144 +1,170 @@
 <!DOCTYPE html>
-<!-- Versiune index.html: 1.30 -->
+<!-- Versiune index.html: 1.32 -->
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
   <title>Listare Peșteri</title>
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.1/dist/umd/supabase.min.js"></script>
-  <script src="listare.js?v=1.28"></script>
+
+  <!-- listare.js v1.32 -->
+  <script src="listare.js?v=1.32"></script>
+
   <script>
-  // Punem codul direct aici ca să fim siguri că se execută v=1.30
+    // Conexiune Supabase
     const SUPABASE_URL = "https://uymmflfhpeurfiigeivh.supabase.co";
     const SUPABASE_KEY = "sb_publishable_XQjrq5LLhA4b3O32ioObqQ_PNbJD5E5";
     window.db_supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log("Conexiune forțată în HTML:", window.db_supa);
+
+    // Login automat dacă ai intrat o dată
+    window.addEventListener("load", () => {
+      if (localStorage.getItem("logged") === "1") {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("content").style.display = "block";
+      }
+    });
+
+    function login() {
+      const parola = document.getElementById("pass").value;
+      if (parola !== "demo123") {
+        alert("Parolă greșită");
+        return;
+      }
+      localStorage.setItem("logged", "1");
+      document.getElementById("login").style.display = "none";
+      document.getElementById("content").style.display = "block";
+    }
   </script>
 
   <style>
- /* Font Arial pentru tabel */
-#tabelPesteri,
-#tabelPesteri th,
-#tabelPesteri td {
-    font-family: Arial, sans-serif !important;
-}
-   
-/* ====== TABEL GENERAL ====== */
-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 20px;
-}
-th, td {
-    border: 1px solid #999;
-    padding: 6px;
-    font-size: 14px;
-}
-th {
-    background: #eee;
-}
+    /* Font Arial pentru tabel */
+    #tabelPesteri,
+    #tabelPesteri th,
+    #tabelPesteri td {
+        font-family: Arial, sans-serif !important;
+    }
 
-/* Latimi coloane */
-th[data-coloana="Sel"],
-td[data-coloana="Sel"] {
-    width: 30px;
-    min-width: 30px;
-    max-width: 30px;
-    text-align: center;
-}
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid #999;
+        padding: 6px;
+        font-size: 14px;
+    }
+    th {
+        background: #eee;
+    }
 
-th[data-coloana="NrP1"],
-td[data-coloana="NrP1"] {
-    width: 40px;
-    min-width: 40px;
-    max-width: 40px;
-    text-align: center;
-    white-space: nowrap;
-}
+    /* Latimi coloane */
+    th[data-coloana="Sel"],
+    td[data-coloana="Sel"] {
+        width: 30px;
+        min-width: 30px;
+        max-width: 30px;
+        text-align: center;
+    }
 
-th[data-coloana="Var"],
-td[data-coloana="Var"] {
-    width: 35px;
-    min-width: 35px;
-    max-width: 35px;
-    text-align: center;
-    white-space: nowrap;
-}
+    th[data-coloana="NrP1"],
+    td[data-coloana="NrP1"] {
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
+        text-align: center;
+        white-space: nowrap;
+    }
 
-th[data-coloana="Denumire"],
-td[data-coloana="Denumire"] {
-    min-width: 250px;
-    max-width: 320px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-th[data-coloana="SinList"],
-td[data-coloana="SinList"] {
-    min-width: 100px;
-    max-width: 320px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-th[data-coloana="Afluent"],
-td[data-coloana="Afluent"] {
-    width: 80px;
-    min-width: 60px;
-    max-width: 140px;
-    text-align: left;
-    white-space: nowrap;
-}
-th[data-coloana="Munte"],
-td[data-coloana="Munte"] {
-    width: 120px;
-    min-width: 100px;
-    max-width: 200px;
-    text-align: left;
-    white-space: nowrap;
-}
-th[data-coloana="Autor"],
-td[data-coloana="Autor"] {
-    min-width: 80px;
-    max-width: 220px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-th[data-coloana="Club"],
-td[data-coloana="Club"] {
-    width: 80px;
-    min-width: 60px;
-    max-width: 120px;
-    text-align: left;
-    white-space: nowrap;
-}
-th[data-coloana="Redactor"],
-td[data-coloana="Redactor"] {
-    width: 80px;
-    min-width: 60px;
-    max-width: 120px;
-    text-align: left;
-    white-space: nowrap;
-}
-/* ====== INPUT-URI DE FILTRARE ====== */
-.filter-row input {
-    width: 95%;
-    padding: 3px;
-    box-sizing: border-box;
-}
+    th[data-coloana="Var"],
+    td[data-coloana="Var"] {
+        width: 35px;
+        min-width: 35px;
+        max-width: 35px;
+        text-align: center;
+        white-space: nowrap;
+    }
 
-/* ====== GRUP SELECTIE ====== */
-fieldset.grup-selectie legend {
-    cursor: pointer;
-    background: #e0e0e0;
-    padding: 4px 10px;
-    border-radius: 4px;
-    border: 1px solid #888;
-    font-weight: bold;
-    display: inline-block;
-}
+    th[data-coloana="Denumire"],
+    td[data-coloana="Denumire"] {
+        min-width: 250px;
+        max-width: 320px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
- </style>
+    th[data-coloana="SinList"],
+    td[data-coloana="SinList"] {
+        min-width: 100px;
+        max-width: 320px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    th[data-coloana="Afluent"],
+    td[data-coloana="Afluent"] {
+        width: 80px;
+        min-width: 60px;
+        max-width: 140px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    th[data-coloana="Munte"],
+    td[data-coloana="Munte"] {
+        width: 120px;
+        min-width: 100px;
+        max-width: 200px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    th[data-coloana="Autor"],
+    td[data-coloana="Autor"] {
+        min-width: 80px;
+        max-width: 220px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    th[data-coloana="Club"],
+    td[data-coloana="Club"] {
+        width: 80px;
+        min-width: 60px;
+        max-width: 120px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    th[data-coloana="Redactor"],
+    td[data-coloana="Redactor"] {
+        width: 80px;
+        min-width: 60px;
+        max-width: 120px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .filter-row input {
+        width: 95%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+
+    fieldset.grup-selectie legend {
+        cursor: pointer;
+        background: #e0e0e0;
+        padding: 4px 10px;
+        border-radius: 4px;
+        border: 1px solid #888;
+        font-weight: bold;
+        display: inline-block;
+    }
+  </style>
 </head>
 
 <body>
@@ -155,35 +181,34 @@ fieldset.grup-selectie legend {
 
   <h2>Lista peșterilor din Bazinul Hidrografic cu codul CodB1</h2>
 
-<!-- 1. Secțiunea de introducere CodB1 -->
-CodB1:
-<select id="bazin">
-  <option value="2046">2046</option>
-  <option value="2050">2050</option>
-</select>
+  CodB1:
+  <select id="bazin">
+    <option value="2046">2046</option>
+    <option value="2050">2050</option>
+  </select>
 
-<button onclick="loadBazin()">Caută</button>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<button onclick="resetFiltre()">Reset filtre</button>
-&nbsp;&nbsp;&nbsp;
-<button onclick="toggleToateColoanele()">Selectare / Deselectare TOT</button>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<button onclick="window.open('mod.htm', '_blank')">Informatii ajutatoare</button>
-  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<button onclick="arataHartaSelectie()">Arată Harta Selecție</button>
-  
-<!-- 2. NOUA Secțiune de selecție coloane (pusă aici) -->
-  <div id="selectieColoane" style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin: 20px 0; border-radius: 5px;">
+  <button onclick="loadBazin()">Caută</button>
+  &nbsp;&nbsp;&nbsp;
+  <button onclick="resetFiltre()">Reset filtre</button>
+  &nbsp;&nbsp;&nbsp;
+  <button onclick="toggleToateColoanele()">Selectare / Deselectare TOT</button>
+  &nbsp;&nbsp;&nbsp;
+  <button onclick="window.open('mod.htm', '_blank')">Informatii ajutatoare</button>
+  &nbsp;&nbsp;&nbsp;
+  <button onclick="arataHartaSelectie()">Arată Harta Selecție</button>
+
+  <!-- Selectie coloane -->
+  <div id="selectieColoane" style="background:#f9f9f9; padding:15px; border:1px solid #ddd; margin:20px 0; border-radius:5px;">
     <strong style="display:block; margin-bottom:10px;">Coloane afișate permanent: NrP1, Var, Denumire</strong>
     <strong style="display:block; margin-bottom:10px;">Selectează date suplimentare:</strong>
- 
-    <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+
+    <div style="display:flex; flex-wrap:wrap; gap:15px;">
+
+      <!-- Grupuri de coloane (nemodificate față de v1.30) -->
       <fieldset class="grup-selectie" data-grupa="sinonime">
         <legend onclick="toggleGrupa('sinonime')">Sinonime – Marcare – Localizare</legend>
-    
         <label><input type="checkbox" class="coloana-db" value="SinList" checked> SinList</label>
-        <label><input type="checkbox" class="coloana-db" value="SitMarc" checked> SitMarc</label>     
+        <label><input type="checkbox" class="coloana-db" value="SitMarc" checked> SitMarc</label>
         <label><input type="checkbox" class="coloana-db" value="DomMorf" checked> DomMorf</label>
         <label><input type="checkbox" class="coloana-db" value="Vale" checked> Vale</label>
         <label><input type="checkbox" class="coloana-db" value="Afluent" checked> Afluent</label>
@@ -193,18 +218,16 @@ CodB1:
 
       <fieldset class="grup-selectie" data-grupa="caracteristiciA">
         <legend onclick="toggleGrupa('caracteristiciA')">Caracteristici Intrare A</legend>
-
         <label><input type="checkbox" class="coloana-db" value="NrDesc" checked> NrDesc</label>
         <label><input type="checkbox" class="coloana-db" value="Ld1" checked> L-d1</label>
         <label><input type="checkbox" class="coloana-db" value="Id1" checked> I-d1</label>
-        <label><input type="checkbox" class="coloana-db" value="Md1" checked> M-d1</label>          
+        <label><input type="checkbox" class="coloana-db" value="Md1" checked> M-d1</label>
         <label><input type="checkbox" class="coloana-db" value="Hd1" checked> H-d1</label>
-        <label><input type="checkbox" class="coloana-db" value="Od1" checked> O-d1</labl>
+        <label><input type="checkbox" class="coloana-db" value="Od1" checked> O-d1</label>
       </fieldset>
 
-       <fieldset class="grup-selectie" data-grupa="parametri">
+      <fieldset class="grup-selectie" data-grupa="parametri">
         <legend onclick="toggleGrupa('parametri')">Parametri Pestera</legend>
-        
         <label><input type="checkbox" class="coloana-db" value="AltAbs" checked> AltAbs</label>
         <label><input type="checkbox" class="coloana-db" value="AltRel" checked> AltRel</label>
         <label><input type="checkbox" class="coloana-db" value="DezvTot" checked> DezvTot</label>
@@ -216,7 +239,6 @@ CodB1:
 
       <fieldset class="grup-selectie" data-grupa="importanta">
         <legend onclick="toggleGrupa('importanta')">Importanta pesterii</legend>
-        
         <label><input type="checkbox" class="coloana-db" value="TipolCav" checked> TipolCav</label>
         <label><input type="checkbox" class="coloana-db" value="MorfoCav" checked> MorfoCav</label>
         <label><input type="checkbox" class="coloana-db" value="SpTeme" checked> SpTeme</label>
@@ -227,49 +249,32 @@ CodB1:
 
       <fieldset class="grup-selectie" data-grupa="descoperitori">
         <legend onclick="toggleGrupa('descoperitori')">Descoperitorii pesterii</legend>
-     
         <label><input type="checkbox" class="coloana-db" value="Autor" checked> Autor</label>
         <label><input type="checkbox" class="coloana-db" value="Club" checked> Club</label>
         <label><input type="checkbox" class="coloana-db" value="DataD" checked> DataD</label>
         <label><input type="checkbox" class="coloana-db" value="Redactor" checked> Redactor</label>
       </fieldset>
 
-     <fieldset class="grup-selectie" data-grupa="harti">
+      <fieldset class="grup-selectie" data-grupa="harti">
         <legend onclick="toggleGrupa('harti')">Schite - Harti - Documente</legend>
-
         <label><input type="checkbox" class="coloana-db" value="num_sch" checked> Schita</label>
         <label><input type="checkbox" class="coloana-db" value="num_loc" checked> Local</label>
         <label><input type="checkbox" class="coloana-db" value="num_map" checked> Harta</label>
         <label><input type="checkbox" class="coloana-db" value="num_foto" checked> Foto</label>
         <label><input type="checkbox" class="coloana-db" value="num_alt" checked> Docu</label>
       </fieldset>
+
     </div>
-  </div> 
- 
-</div>
+  </div>
 
   <table id="tabelPesteri">
     <thead>
-      <tr>
-<!-- Lăsăm gol aici. JavaScript va genera <th>-urile automat -->
-      </tr>
+      <tr></tr>
     </thead>
     <tbody></tbody>
   </table>
 
 </div>
-
-<script>
-function login() {
-  const parola = document.getElementById("pass").value;
-  if (parola !== "demo123") {
-    alert("Parolă greșită");
-    return;
-  }
-  document.getElementById("login").style.display = "none";
-  document.getElementById("content").style.display = "block";
-}
-</script>
 
 </body>
 </html>
