@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.33
+     harta.html — Versiunea 1.34
      ============================ -->
 <html lang="ro">
 <head>
@@ -99,6 +99,26 @@ const map = L.map('map').setView([45.5, 23.5], 8);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18
 }).addTo(map);
+
+// Layer OSM (implicit)
+const osm = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  { maxZoom: 18 }
+).addTo(map);
+
+// Layer satelit ESRI
+const esriSat = L.tileLayer(
+  'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  { maxZoom: 19 }
+);
+
+// Control de layer-e (comutator)
+const baseLayers = {
+  "Harta OSM": osm,
+  "Satelit ESRI": esriSat
+};
+
+L.control.layers(baseLayers).addTo(map);
 
 const markers = [];
 
