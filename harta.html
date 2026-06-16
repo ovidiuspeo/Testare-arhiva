@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.32
+     harta.html — Versiunea 1.33
      ============================ -->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
 <title>Harta – Selecție Peșteri</title>
 
-<!-- Unifică localStorage între index.html și harta.html -->
 <base href="/Testare-arhiva/">
 
 <style>
@@ -63,7 +62,6 @@
 <div id="sidebar">
   <div id="title">Bazinul – <span id="codB1Title"></span></div>
 
-  <!-- v1.32: Închide DOAR tabul hărții -->
   <button onclick="window.close()" 
           style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
       Înapoi
@@ -87,7 +85,6 @@
 // -------------------------------------------------------------
 const selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
 
-// Extragem CodB1 (toate peșterile din selecție au același CodB1)
 const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
 document.getElementById("codB1Title").textContent = codB1;
 
@@ -96,9 +93,38 @@ document.getElementById("codB1Title").textContent = codB1;
 // -------------------------------------------------------------
 const map = L.map('map').setView([45.5, 23.5], 8);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18
-}).addTo(map);
+// === Layer 1: OpenStreetMap ===
+const osmLayer = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  { maxZoom: 19 }
+).addTo(map);
+
+// === Layer 2: ESRI World Imagery (satelit global) ===
+const esriSat = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}',
+  { maxZoom: 19, attribution: 'Tiles © Esri' }
+);
+
+// === Layer 3: ANCPI Ortofoto România (WMS) ===
+const ancpiOrto = L.tileLayer.wms(
+  "https://geoportal.ancpi.ro/arcgis/services/ORTO/MapServer/WMSServer",
+  {
+    layers: '0',
+    format: 'image/png',
+    transparent: false,
+    maxZoom: 20,
+    attribution: "ANCPI Ortofoto"
+  }
+);
+
+// === Control de layer-e ===
+L.control.layers(
+  {
+    "Străzi (OSM)": osmLayer,
+    "Satelit (ESRI)": esriSat,
+    "Ortofoto România (ANCPI)": ancpiOrto
+  }
+).addTo(map);
 
 const markers = [];
 
@@ -110,14 +136,9 @@ tbody.innerHTML = "";
 
 selectie.forEach((p) => {
 
-    // determinăm culoarea biluței
-    let culoare = "red"; // implicit: fără coordonate
+    let culoare = "red";
+    if (p.Latit && p.Long) culoare = "green";
 
-    if (p.Latit && p.Long) {
-        culoare = "green"; // coordonate precise
-    }
-
-    // tabel
     const tr = document.createElement("tr");
     tr.innerHTML = `
         <td>${p.NrP1}</td>
@@ -135,7 +156,6 @@ selectie.forEach((p) => {
     `;
     tbody.appendChild(tr);
 
-    // marker pe hartă
     if (p.Latit && p.Long) {
         const m = L.marker([p.Latit, p.Long]).addTo(map);
         m.bindPopup(`
