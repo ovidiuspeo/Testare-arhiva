@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.36
+     harta.html — Versiunea 1.37
      ============================ -->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
 <title>Harta – Selecție Peșteri</title>
 
-<!-- IMPORTANT: eliminat <base> pentru compatibilitate Leaflet -->
-<!-- NU pune <base> în acest fișier -->
+<!-- Fără <base> pentru compatibilitate Leaflet -->
 
 <style>
   body {
@@ -18,12 +17,7 @@
     height: 100vh;
     overflow: hidden;
   }
-
-  #map {
-    width: 75%;
-    height: 100%;
-  }
-
+  #map { width: 75%; height: 100%; }
   #sidebar {
     width: 25%;
     height: 100%;
@@ -32,20 +26,17 @@
     box-sizing: border-box;
     border-left: 2px solid #ccc;
   }
-
   #title {
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 15px;
     text-align: center;
   }
-
   table {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
   }
-
   th, td {
     border: 1px solid #aaa;
     padding: 6px;
@@ -54,7 +45,6 @@
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 </head>
 <body>
 
@@ -62,19 +52,13 @@
 
 <div id="sidebar">
   <div id="title">Bazinul – <span id="codB1Title"></span></div>
-
-  <button onclick="window.close()" 
-          style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
-      Înapoi
+  <button onclick="window.close()" style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
+    Înapoi
   </button>
 
   <table id="lista">
     <thead>
-      <tr>
-        <th>Nr</th>
-        <th>Denumire</th>
-        <th>Coord</th>
-      </tr>
+      <tr><th>Nr</th><th>Denumire</th><th>Coord</th></tr>
     </thead>
     <tbody></tbody>
   </table>
@@ -85,7 +69,6 @@
 // 1. Citim selecția trimisă din index.html
 // -------------------------------------------------------------
 const selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
-
 const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
 document.getElementById("codB1Title").textContent = codB1;
 
@@ -100,13 +83,12 @@ const osmLayer = L.tileLayer(
   { maxZoom: 19 }
 ).addTo(map);
 
-// === Layer 2: ESRI World Imagery (satelit global) ===
-// IMPORTANT: funcționează corect doar dacă <base> este eliminat
-const esriSat = L.tileLayer(
-  'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}',
+// === Layer 2: OpenAerialMap (imagini satelit reale) ===
+const oamSat = L.tileLayer(
+  'https://tiles.openaerialmap.org/tiles/{z}/{x}/{y}.png',
   {
     maxZoom: 19,
-    attribution: 'Tiles © Esri'
+    attribution: 'Imagery © OpenAerialMap'
   }
 );
 
@@ -114,7 +96,7 @@ const esriSat = L.tileLayer(
 L.control.layers(
   {
     "Străzi (OSM)": osmLayer,
-    "Satelit (ESRI)": esriSat
+    "Satelit (OAM)": oamSat
   }
 ).addTo(map);
 
@@ -127,47 +109,46 @@ const tbody = document.querySelector("#lista tbody");
 tbody.innerHTML = "";
 
 selectie.forEach((p) => {
+  let culoare = "red";
+  if (p.Latit && p.Long) culoare = "green";
 
-    let culoare = "red";
-    if (p.Latit && p.Long) culoare = "green";
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${p.NrP1}</td>
+    <td>${p.Denumire}</td>
+    <td style="text-align:center;">
+      <span style="
+        display:inline-block;
+        width:14px;
+        height:14px;
+        border-radius:50%;
+        background:${culoare};
+        border:1px solid #555;
+      "></span>
+    </td>
+  `;
+  tbody.appendChild(tr);
 
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-        <td>${p.NrP1}</td>
-        <td>${p.Denumire}</td>
-        <td style="text-align:center;">
-            <span style="
-                display:inline-block;
-                width:14px;
-                height:14px;
-                border-radius:50%;
-                background:${culoare};
-                border:1px solid #555;
-            "></span>
-        </td>
-    `;
-    tbody.appendChild(tr);
-
-    if (p.Latit && p.Long) {
-        const m = L.marker([p.Latit, p.Long]).addTo(map);
-        m.bindPopup(`
-            <div style="font-size:14px; line-height:1.3;">
-                <b>${p.CodB1}/${p.NrP1}</b><br>
-                ${p.Denumire}<br>
-                Lat: ${p.Latit}<br>
-                Long: ${p.Long}
-            </div>
-        `);
-        markers.push(m);
-    }
+  if (p.Latit && p.Long) {
+    const m = L.marker([p.Latit, p.Long]).addTo(map);
+    m.bindPopup(`
+      <div style="font-size:14px; line-height:1.3;">
+        <b>${p.CodB1}/${p.NrP1}</b><br>
+        ${p.Denumire}<br>
+        Lat: ${p.Latit}<br>
+        Long: ${p.Long}
+      </div>
+    `);
+    markers.push(m);
+  }
 });
 
 // -------------------------------------------------------------
 // 4. Zoom automat pe selecție
 // -------------------------------------------------------------
 if (markers.length > 0) {
-    const group = L.featureGroup(markers);
-    map.fitBounds(group.getBounds(), { padding: [20, 20] });
+  const group = L.featureGroup(markers);
+  map.fitBounds(group.getBounds(), { padding: [20, 20] });
 }
 </script>
 
