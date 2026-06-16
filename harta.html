@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.33
+     harta.html — Versiunea 1.34
      ============================ -->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
 <title>Harta – Selecție Peșteri</title>
 
-<base href="/Testare-arhiva/">
+<!-- IMPORTANT: eliminat <base> pentru compatibilitate Leaflet -->
+<!-- <base href="/Testare-arhiva/"> -->
 
 <style>
   body {
@@ -100,20 +101,12 @@ const osmLayer = L.tileLayer(
 ).addTo(map);
 
 // === Layer 2: ESRI World Imagery (satelit global) ===
+// IMPORTANT: funcționează corect doar dacă <base> este eliminat
 const esriSat = L.tileLayer(
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}',
-  { maxZoom: 19, attribution: 'Tiles © Esri' }
-);
-
-// === Layer 3: ANCPI Ortofoto România (WMS) ===
-const ancpiOrto = L.tileLayer.wms(
-  "https://geoportal.ancpi.ro/arcgis/services/ORTO/MapServer/WMSServer",
   {
-    layers: '0',
-    format: 'image/png',
-    transparent: false,
-    maxZoom: 20,
-    attribution: "ANCPI Ortofoto"
+    maxZoom: 19,
+    attribution: 'Tiles © Esri'
   }
 );
 
@@ -121,8 +114,7 @@ const ancpiOrto = L.tileLayer.wms(
 L.control.layers(
   {
     "Străzi (OSM)": osmLayer,
-    "Satelit (ESRI)": esriSat,
-    "Ortofoto România (ANCPI)": ancpiOrto
+    "Satelit (ESRI)": esriSat
   }
 ).addTo(map);
 
