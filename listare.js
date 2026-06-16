@@ -205,7 +205,7 @@ function arataHartaSelectie() {
     localStorage.setItem("selectiePesteri", JSON.stringify(selectate));
 
     // Deschidem harta într-un TAB NOU
-    window.open("harta2.html?mode=selectie", "_blank");
+    window.open("harta.html?mode=selectie", "_blank");
 }
 
 // -------------------------------------------------------------
