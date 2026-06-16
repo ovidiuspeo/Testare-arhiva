@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.49
+     harta.html — Versiunea 1.45
      ============================ -->
 <html lang="ro">
 <head>
@@ -52,8 +52,8 @@
   }
 </style>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com" />
+<script src="https://unpkg.com"></script>
 
 </head>
 <body>
@@ -63,7 +63,6 @@
 <div id="sidebar">
   <div id="title">Bazinul – <span id="codB1Title"></span></div>
 
-  <!-- v1.32: Închide DOAR tabul hărții -->
   <button onclick="window.close()" 
           style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
       Înapoi
@@ -85,88 +84,71 @@
 // -------------------------------------------------------------
 // 1. Citim selecția trimisă din index.html
 // -------------------------------------------------------------
-const selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
+var selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
 
-// Extragem CodB1 (toate peșterile din selecție au același CodB1)
-const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
+var codB1 = "";
+if (selectie.length > 0) {
+    codB1 = selectie[0].CodB1;
+}
 document.getElementById("codB1Title").textContent = codB1;
 
 // -------------------------------------------------------------
-// 2. Inițializăm harta și straturile
+// 2. Inițializăm harta și straturile (Inclusiv cel Satelitar)
 // -------------------------------------------------------------
 var map = L.map('map').setView([45.5, 23.5], 8);
 
-// Stratul standard
-var străzi = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18
+// Stratul standard (OpenStreetMap)
+var hartaStrazi = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap'
 }).addTo(map);
 
-// Stratul satelit de la Google Maps
-var satelit = L.tileLayer('https://google.com{x}&y={y}&z={z}', {
-    maxZoom: 20
+// Stratul Satelit (Esri World Imagery) - Stabil și de înaltă rezoluție pe GitHub
+var hartaSatelit = L.tileLayer('https://arcgisonline.com{z}/{y}/{x}', {
+    maxZoom: 18,
+    attribution: 'Tiles &copy; Esri'
 });
 
-// Selectorul din colțul hărții
-var straturiBază = {
-    "Hartă Străzi": străzi,
-    "Satelit Google": satelit
+// Adăugăm selectorul de straturi în colțul din dreapta-sus
+var straturiDeBaza = {
+    "Hartă Străzi (OSM)": hartaStrazi,
+    "Satelit (Esri)": hartaSatelit
 };
-L.control.layers(straturiBază).addTo(map);
+L.control.layers(straturiDeBaza).addTo(map);
+
+var markers = [];
 
 // -------------------------------------------------------------
 // 3. Afișăm marker-ele și tabelul
 // -------------------------------------------------------------
-const tbody = document.querySelector("#lista tbody");
+var tbody = document.querySelector("#lista tbody");
 tbody.innerHTML = "";
 
-selectie.forEach((p) => {
+selectie.forEach(function(p) {
 
-    // determinăm culoarea biluței
-    let culoare = "red"; // implicit: fără coordonate
-
+    var culoare = "red";
     if (p.Latit && p.Long) {
-        culoare = "green"; // coordonate precise
+        culoare = "green";
     }
 
-    // tabel
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-        <td>${p.NrP1}</td>
-        <td>${p.Denumire}</td>
-        <td style="text-align:center;">
-            <span style="
-                display:inline-block;
-                width:14px;
-                height:14px;
-                border-radius:50%;
-                background:${culoare};
-                border:1px solid #555;
-            "></span>
-        </td>
-    `;
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + p.NrP1 + "</td><td>" + p.Denumire + "</td><td style='text-align:center;'><span style='display:inline-block;width:14px;height:14px;border-radius:50%;background:" + culoare + ";border:1px solid #555;'></span></td>";
     tbody.appendChild(tr);
 
-    // marker pe hartă
     if (p.Latit && p.Long) {
-        const m = L.marker([p.Latit, p.Long]).addTo(map);
-        m.bindPopup(`
-            <div style="font-size:14px; line-height:1.3;">
-                <b>${p.CodB1}/${p.NrP1}</b><br>
-                ${p.Denumire}<br>
-                Lat: ${p.Latit}<br>
-                Long: ${p.Long}
-            </div>
-        `);
+        var m = L.marker([p.Latit, p.Long]).addTo(map);
+        m.bindPopup("<div style='font-size:14px;line-height:1.3;'><b>" + p.CodB1 + "/" + p.NrP1 + "</b><br>" + p.Denumire + "<br>Lat: " + p.Latit + "<br>Long: " + p.Long + "</div>");
         markers.push(m);
     }
 });
 
 // -------------------------------------------------------------
-// 4. Zoom automat pe selecție
+// 4. Zoom automat pe selecție (Metodă nativă imună la trunchiere AI)
 // -------------------------------------------------------------
 if (markers.length > 0) {
-    const group = L.featureGroup(markers);
-    map.fitBounds(group.getBounds(), { padding: [20, 20] });
+    var group = L.featureGroup(markers);
+    // Extragerea limitelor hărții fără utilizarea opțiunilor de padding în acolade
+    map.fitBounds(group.getBounds());
 }
 </script>
 
