@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.39
+     harta.html — Versiunea 1.40
      ============================ -->
 <html lang="ro">
 <head>
@@ -47,6 +47,7 @@
   }
 </style>
 
+<!-- Includem Leaflet corect -->
 <link rel="stylesheet" href="https://unpkg.com" />
 <script src="https://unpkg.com"></script>
 </head>
@@ -73,8 +74,9 @@
 // 1. Citim selecția trimisă din index.html
 // -------------------------------------------------------------
 const selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
-// Corecție: selectie este un array, citim proprietatea de pe primul element [0]
-const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
+
+// Extragere sigură pentru titlu (folosind primul element din listă)
+const codB1 = (selectie && selectie.length > 0) ? selectie[0].CodB1 : "";
 document.getElementById("codB1Title").textContent = codB1;
 
 // -------------------------------------------------------------
@@ -82,7 +84,7 @@ document.getElementById("codB1Title").textContent = codB1;
 // -------------------------------------------------------------
 const map = L.map('map').setView([45.5, 23.5], 8);
 
-// === Layer 1: OpenStreetMap (Harta standard) ===
+// === Layer 1: OpenStreetMap (Harta standard străzi) ===
 const osmLayer = L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   { 
@@ -100,18 +102,18 @@ const esriSat = L.tileLayer(
   }
 );
 
-// === Control de layer-e (Butonul din dreapta sus) ===
+// === Control de straturi (Butonul din dreapta sus) ===
 L.control.layers(
   {
     "Harta Străzi (OSM)": osmLayer,
-    "Satelit Real (Esri)": esriSat
+    "Satelit (Esri)": esriSat
   }
 ).addTo(map);
 
 const markers = [];
 
 // -------------------------------------------------------------
-// 3. Afișăm marker-ele și tabelul
+// 3. Afișăm marker-ele și tabelul în sidebar
 // -------------------------------------------------------------
 const tbody = document.querySelector("#lista tbody");
 tbody.innerHTML = "";
@@ -127,7 +129,7 @@ selectie.forEach((p) => {
   
   tr.innerHTML = `
     <td>${p.NrP1}</td>
-    <td>${p.Denumire}</td>
+    <td>${p.Denumire || ""}</td>
     <td style="text-align:center;">
       <span style="
         display:inline-block;
@@ -145,15 +147,15 @@ selectie.forEach((p) => {
     const m = L.marker([p.Latit, p.Long]).addTo(map);
     m.bindPopup(`
       <div style="font-size:14px; line-height:1.3;">
-        <b>${p.CodB1}/${p.NrP1}</b><br>
-        ${p.Denumire}<br>
+        <b>Bazin: ${p.CodB1}/${p.NrP1}</b><br>
+        ${p.Denumire || "Fără denumire"}<br>
         Lat: ${p.Latit}<br>
         Long: ${p.Long}
       </div>
     `);
     markers.push(m);
 
-    // Funcționalitate extra: La click pe rândul din tabel, mută harta pe peșteră și deschide popup-ul
+    // Zoom și deschidere popup la click pe rândul din tabel
     tr.addEventListener("click", () => {
       map.setView([p.Latit, p.Long], 15);
       m.openPopup();
@@ -162,11 +164,11 @@ selectie.forEach((p) => {
 });
 
 // -------------------------------------------------------------
-// 4. Zoom automat pe selecție (Corectat fără erori de sintaxă)
+// 4. Zoom automat pe selecție
 // -------------------------------------------------------------
 if (markers.length > 0) {
   const group = L.featureGroup(markers);
-  map.fitBounds(group.getBounds(), { padding: [30, 30] });
+  map.fitBounds(group.getBounds(), { padding: [50, 50] });
 }
 </script>
 
