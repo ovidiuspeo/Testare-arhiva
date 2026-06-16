@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.32
+     harta.html — Versiunea 1.41
      ============================ -->
 <html lang="ro">
 <head>
@@ -96,9 +96,24 @@ document.getElementById("codB1Title").textContent = codB1;
 // -------------------------------------------------------------
 const map = L.map('map').setView([45.5, 23.5], 8);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18
-}).addTo(map);
+// Stratul 1: Harta standard cu străzi (OSM)
+const hartaStrazi = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap'
+}).addTo(map); // adăugat implicit la pornire
+
+// Stratul 2: Satelit Real (Esri World Imagery)
+const hartaSatelit = L.tileLayer('https://arcgisonline.com{z}/{y}/{x}', {
+    maxZoom: 18,
+    attribution: 'Tiles &copy; Esri &mdash; Sursa: Esri, i-cubed, USDA, USGS, GeoEye, Getmapping, Aerogrid, IGN'
+});
+
+// Adăugăm selectorul de straturi în colțul din dreapta-sus
+const straturiDeBaza = {
+    "Hartă Străzi": hartaStrazi,
+    "Satelit": hartaSatelit
+};
+L.control.layers(straturiDeBaza).addTo(map);
 
 const markers = [];
 
