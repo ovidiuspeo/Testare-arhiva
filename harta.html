@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- ============================
-     harta.html — Versiunea 1.35
+     harta.html — Versiunea 1.36
      ============================ -->
 <html lang="ro">
 <head>
@@ -50,6 +50,11 @@
     border: 1px solid #aaa;
     padding: 6px;
   }
+
+  /* Cursor crosshair în modul Marcare */
+  .map-crosshair {
+    cursor: crosshair !important;
+  }
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -63,16 +68,15 @@
 <div id="sidebar">
   <div id="title">Bazinul – <span id="codB1Title"></span></div>
 
-  <!-- v1.32: Inchide DOAR tabul hartii -->
   <button onclick="window.close()" 
           style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
       Inapoi
   </button>
- <label style="display:block; margin-bottom:10px;">
+
+  <label style="display:block; margin-bottom:10px;">
     <input type="checkbox" id="modMarcare" />
     Marcare
- </label>
-
+  </label>
 
   <table id="lista">
     <thead>
@@ -92,7 +96,7 @@
 // -------------------------------------------------------------
 const selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
 
-// Extragem CodB1 (toate pesterile din selectie au acelasi CodB1)
+// Extragem CodB1
 const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
 document.getElementById("codB1Title").textContent = codB1;
 
@@ -101,14 +105,14 @@ document.getElementById("codB1Title").textContent = codB1;
 // -------------------------------------------------------------
 const map = L.map('map').setView([45.5, 23.5], 8);
 
-// Add scale control (km / meters)
+// Control scale
 L.control.scale({
     metric: true,
     imperial: false,
     maxWidth: 150
 }).addTo(map);
 
-// Layer OSM (implicit)
+// Layer OSM
 const osm = L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   { maxZoom: 18 }
@@ -120,13 +124,11 @@ const esriSat = L.tileLayer(
   { maxZoom: 19 }
 );
 
-// Control de layere (comutator)
-const baseLayers = {
+// Control layere
+L.control.layers({
   "Harta OSM": osm,
   "Satelit ESRI": esriSat
-};
-
-L.control.layers(baseLayers).addTo(map);
+}).addTo(map);
 
 const markers = [];
 
@@ -138,14 +140,8 @@ tbody.innerHTML = "";
 
 selectie.forEach((p) => {
 
-    // determinam culoarea bulinei
-    let culoare = "red"; // implicit: fara coordonate
+    let culoare = (p.Latit && p.Long) ? "green" : "red";
 
-    if (p.Latit && p.Long) {
-        culoare = "green"; // coordonate precise
-    }
-
-    // tabel
     const tr = document.createElement("tr");
     tr.innerHTML = `
         <td>${p.NrP1}</td>
@@ -163,7 +159,6 @@ selectie.forEach((p) => {
     `;
     tbody.appendChild(tr);
 
-    // marker pe harta
     if (p.Latit && p.Long) {
         const m = L.marker([p.Latit, p.Long]).addTo(map);
         m.bindPopup(`
@@ -186,18 +181,27 @@ if (markers.length > 0) {
     map.fitBounds(group.getBounds(), { padding: [20, 20] });
 }
 
-// Mode for placing a marker and reading coordinates
+// -------------------------------------------------------------
+// 5. Cursor crosshair în modul Marcare
+// -------------------------------------------------------------
+document.getElementById("modMarcare").addEventListener("change", function() {
+    if (this.checked) {
+        map.getContainer().classList.add("map-crosshair");
+    } else {
+        map.getContainer().classList.remove("map-crosshair");
+    }
+});
+
+// -------------------------------------------------------------
+// 6. Click pe harta → marcare coordonate
+// -------------------------------------------------------------
 let tempMarker = null;
 
 map.on('click', function(e) {
     const modMarcare = document.getElementById("modMarcare").checked;
-
-    // If marking mode is OFF, do nothing
     if (!modMarcare) return;
 
-    // Ask user for NrP1
     const nr = prompt("Introdu NrP1 pentru aceasta pestera:");
-
     if (!nr) {
         alert("Anulat.");
         return;
@@ -206,7 +210,6 @@ map.on('click', function(e) {
     const lat = e.latlng.lat.toFixed(6);
     const lon = e.latlng.lng.toFixed(6);
 
-    // Confirm saving
     const ok = confirm(
         "Salvez coordonatele pentru NrP1 " + nr +
         "?\nLat: " + lat + "\nLon: " + lon
@@ -214,12 +217,8 @@ map.on('click', function(e) {
 
     if (!ok) return;
 
-    // Remove previous temporary marker
-    if (tempMarker) {
-        map.removeLayer(tempMarker);
-    }
+    if (tempMarker) map.removeLayer(tempMarker);
 
-    // Add marker
     tempMarker = L.marker([lat, lon]).addTo(map);
 
     tempMarker.bindPopup(
@@ -229,10 +228,8 @@ map.on('click', function(e) {
         "Copiaza si pune in baza de date"
     ).openPopup();
 
-    // Here you will later add saving to database
     console.log("Coordonate pentru NrP1 " + nr + ": ", lat, lon);
 });
-
 </script>
 
 </body>
