@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Versiune index.html: 1.33a -->
+<!-- Versiune index.html: 1.40 -->
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
@@ -197,75 +197,75 @@
   &nbsp;&nbsp;&nbsp;
   <button onclick="arataHartaSelectie()">Arată Harta Selecție</button>
 
-  <!-- Selectie coloane -->
-  <div id="selectieColoane" style="background:#f9f9f9; padding:15px; border:1px solid #ddd; margin:20px 0; border-radius:5px;">
-    <strong style="display:block; margin-bottom:10px;">Coloane afișate permanent: NrP1, Var, Denumire</strong>
-    <strong style="display:block; margin-bottom:10px;">Selectează date suplimentare:</strong>
+<!-- ===================== GRUPURI DE COLOANE ===================== -->
+<div id="selectieColoane">
+    <div class="grupuri">
 
-    <div style="display:flex; flex-wrap:wrap; gap:15px;">
+        <fieldset data-grupa="sinonime">
+            <legend onclick="toggleGrupa('sinonime')">Sinonime – Marcare – Localizare</legend>
+            <label><input type="checkbox" class="coloana-db" value="SinList"> SinList</label><br>
+            <label><input type="checkbox" class="coloana-db" value="SitMarc"> SitMarc</label><br>
+            <label><input type="checkbox" class="coloana-db" value="DomMorf"> DomMorf</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Vale"> Vale</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Afluent"> Afluent</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Versant"> Versant</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Munte"> Munte</label>
+        </fieldset>
 
-      <!-- Grupuri de coloane (nemodificate față de v1.30) -->
-      <fieldset class="grup-selectie" data-grupa="sinonime">
-        <legend onclick="toggleGrupa('sinonime')">Sinonime – Marcare – Localizare</legend>
-        <label><input type="checkbox" class="coloana-db" value="SinList"> SinList</label>
-        <label><input type="checkbox" class="coloana-db" value="SitMarc"> SitMarc</label>
-        <label><input type="checkbox" class="coloana-db" value="DomMorf"> DomMorf</label>
-        <label><input type="checkbox" class="coloana-db" value="Vale"> Vale</label>
-        <label><input type="checkbox" class="coloana-db" value="Afluent"> Afluent</label>
-        <label><input type="checkbox" class="coloana-db" value="Versant"> Versant</label>
-        <label><input type="checkbox" class="coloana-db" value="Munte"> Munte</label>
-      </fieldset>
+        <fieldset data-grupa="intrareA">
+            <legend onclick="toggleGrupa('intrareA')">Caracteristici Intrare A</legend>
+            <label><input type="checkbox" class="coloana-db" value="NrDesc"> NrDesc</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Ld1"> L-d1</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Id1"> I-d1</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Md1"> M-d1</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Hd1"> H-d1</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Od1"> O-d1</label>
+        </fieldset>
 
-      <fieldset class="grup-selectie" data-grupa="caracteristiciA">
-        <legend onclick="toggleGrupa('caracteristiciA')">Caracteristici Intrare A</legend>
-        <label><input type="checkbox" class="coloana-db" value="NrDesc"> NrDesc</label>
-        <label><input type="checkbox" class="coloana-db" value="Ld1"> L-d1</label>
-        <label><input type="checkbox" class="coloana-db" value="Id1"> I-d1</label>
-        <label><input type="checkbox" class="coloana-db" value="Md1"> M-d1</label>
-        <label><input type="checkbox" class="coloana-db" value="Hd1"> H-d1</label>
-        <label><input type="checkbox" class="coloana-db" value="Od1"> O-d1</label>
-      </fieldset>
+        <fieldset data-grupa="parametri">
+            <legend onclick="toggleGrupa('parametri')">Parametri Peșteră</legend>
+            <label><input type="checkbox" class="coloana-db" value="AltAbs" checked> AltAbs</label><br>
+            <label><input type="checkbox" class="coloana-db" value="AltRel" checked> AltRel</label><br>
+            <label><input type="checkbox" class="coloana-db" value="DezvTot" checked> DezvTot</label><br>
+            <label><input type="checkbox" class="coloana-db" value="DenivNC" checked> DenivNC</label><br>
+            <label><input type="checkbox" class="coloana-db" value="DenivPC" checked> DenivPC</label><br>
+            <label><input type="checkbox" class="coloana-db" value="ExtLong"> ExtLong</label><br>
+            <label><input type="checkbox" class="coloana-db" value="NrEtaj"> NrEtaj</label>
+        </fieldset>
 
-      <fieldset class="grup-selectie" data-grupa="parametri">
-        <legend onclick="toggleGrupa('parametri')">Parametri Pestera</legend>
-        <label><input type="checkbox" class="coloana-db" value="AltAbs" checked> AltAbs</label>
-        <label><input type="checkbox" class="coloana-db" value="AltRel" checked> AltRel</label>
-        <label><input type="checkbox" class="coloana-db" value="DezvTot" checked> DezvTot</label>
-        <label><input type="checkbox" class="coloana-db" value="DenivNC" checked> DenivNC</label>
-        <label><input type="checkbox" class="coloana-db" value="DenivPC" checked> DenivPC</label>
-        <label><input type="checkbox" class="coloana-db" value="ExtLong"> ExtLong</label>
-        <label><input type="checkbox" class="coloana-db" value="NrEtaj"> NrEtaj</label>
-      </fieldset>
+        <fieldset data-grupa="importanta">
+            <legend onclick="toggleGrupa('importanta')">Importanța Peșterii</legend>
+            <label><input type="checkbox" class="coloana-db" value="TipolCav"> TipolCav</label><br>
+            <label><input type="checkbox" class="coloana-db" value="MorfoCav"> MorfoCav</label><br>
+            <label><input type="checkbox" class="coloana-db" value="SpTeme"> SpTeme</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Depozit"> Depozit</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Fauna"> Fauna</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Conserv"> Conserv</label>
+        </fieldset>
 
-      <fieldset class="grup-selectie" data-grupa="importanta">
-        <legend onclick="toggleGrupa('importanta')">Importanta pesterii</legend>
-        <label><input type="checkbox" class="coloana-db" value="TipolCav"> TipolCav</label>
-        <label><input type="checkbox" class="coloana-db" value="MorfoCav"> MorfoCav</label>
-        <label><input type="checkbox" class="coloana-db" value="SpTeme"> SpTeme</label>
-        <label><input type="checkbox" class="coloana-db" value="Depozit"> Depozit</label>
-        <label><input type="checkbox" class="coloana-db" value="Fauna"> Fauna</label>
-        <label><input type="checkbox" class="coloana-db" value="Conserv"> Conserv</label>
-      </fieldset>
+        <fieldset data-grupa="descoperitori">
+            <legend onclick="toggleGrupa('descoperitori')">Descoperitorii Peșterii</legend>
+            <label><input type="checkbox" class="coloana-db" value="Autor"> Autor</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Club" checked> Club</label><br>
+            <label><input type="checkbox" class="coloana-db" value="DataD"> DataD</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Redactor"> Redactor</label>
+        </fieldset>
 
-      <fieldset class="grup-selectie" data-grupa="descoperitori">
-        <legend onclick="toggleGrupa('descoperitori')">Descoperitorii pesterii</legend>
-        <label><input type="checkbox" class="coloana-db" value="Autor"> Autor</label>
-        <label><input type="checkbox" class="coloana-db" value="Club" checked> Club</label>
-        <label><input type="checkbox" class="coloana-db" value="DataD"> DataD</label>
-        <label><input type="checkbox" class="coloana-db" value="Redactor"> Redactor</label>
-      </fieldset>
-
-      <fieldset class="grup-selectie" data-grupa="harti">
-        <legend onclick="toggleGrupa('harti')">Schite - Harti - Documente</legend>
-        <label><input type="checkbox" class="coloana-db" value="num_sch" checked> Schita</label>
-        <label><input type="checkbox" class="coloana-db" value="num_loc" checked> Local</label>
-        <label><input type="checkbox" class="coloana-db" value="num_map" checked> Harta</label>
-        <label><input type="checkbox" class="coloana-db" value="num_foto" checked> Foto</label>
-        <label><input type="checkbox" class="coloana-db" value="num_alt" checked> Docu</label>
-      </fieldset>
+        <fieldset data-grupa="harti">
+            <legend onclick="toggleGrupa('harti')">Schițe – Hărți – Documente</legend>
+            <label><input type="checkbox" class="coloana-db" value="num_sch" checked> Schiță</label><br>
+            <label><input type="checkbox" class="coloana-db" value="num_loc" checked> Local</label><br>
+            <label><input type="checkbox" class="coloana-db" value="num_map" checked> Hartă</label><br>
+            <label><input type="checkbox" class="coloana-db" value="num_foto" checked> Foto</label><br>
+            <label><input type="checkbox" class="coloana-db" value="num_alt" checked> Docu</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Latit"> Latit</label><br>
+            <label><input type="checkbox" class="coloana-db" value="Long"> Long</label>
+        </fieldset>
 
     </div>
-  </div>
+</div>
+
+
 
   <table id="tabelPesteri">
     <thead>
