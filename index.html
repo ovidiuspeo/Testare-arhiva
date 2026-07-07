@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Versiune index.html: 1.39 -->
+<!-- Versiune index.html: 1.40 -->
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
@@ -172,21 +172,22 @@
         font-weight: bold;
         display: inline-block;
     }
-/* HEADER TABEL + FILTRE FIXE SUS */
-#tabel-header-fix {
+/* Rândul 1: Denumirea coloanelor */
+#tabelPesteri thead tr:nth-child(1) {
     position: sticky;
     top: 0;
     background: white;
-    z-index: 999;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #ccc;
+    z-index: 1000;
 }
-#tabelPesteri thead tr {
+
+/* Rândul 2: Filtrele */
+#tabelPesteri thead tr:nth-child(2) {
     position: sticky;
-    top: 0;
+    top: 32px; /* înălțimea rândului cu denumiri */
     background: white;
     z-index: 999;
 }
+
    
   </style>
   
