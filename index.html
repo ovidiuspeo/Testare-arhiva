@@ -37,244 +37,144 @@
     }
   </script>
 
-  <style>
-    /* Font Arial pentru tabel */
-    #tabelPesteri,
-    #tabelPesteri th,
-    #tabelPesteri td {
-        font-family: Arial, sans-serif !important;
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    body { font-family: Arial; margin: 20px; }
+    h1 { margin-bottom: 10px; }
+
+    .btn-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        background: #eee;
+        border: 1px solid #999;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .section {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
+    .section-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(4, auto);
+        gap: 6px 20px;
     }
 
     table {
-        border-collapse: collapse;
         width: 100%;
+        border-collapse: collapse;
         margin-top: 20px;
     }
+
     th, td {
-        border: 1px solid #999;
+        border: 1px solid #ccc;
         padding: 6px;
-        font-size: 14px;
-    }
-    th {
-        background: #eee;
-    }
-
-    /* Latimi coloane */
-    th[data-coloana="Sel"],
-    td[data-coloana="Sel"] {
-        width: 30px;
-        min-width: 30px;
-        max-width: 30px;
-        text-align: center;
-    }
-
-    th[data-coloana="NrP1"],
-    td[data-coloana="NrP1"] {
-        width: 40px;
-        min-width: 40px;
-        max-width: 40px;
-        text-align: center;
-        white-space: nowrap;
-    }
-
-    th[data-coloana="Var"],
-    td[data-coloana="Var"] {
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
-        text-align: center;
-        white-space: nowrap;
-    }
-
-    th[data-coloana="Denumire"],
-    td[data-coloana="Denumire"] {
-        min-width: 250px;
-        max-width: 320px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    th[data-coloana="SinList"],
-    td[data-coloana="SinList"] {
-        min-width: 100px;
-        max-width: 320px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    th[data-coloana="Afluent"],
-    td[data-coloana="Afluent"] {
-        width: 80px;
-        min-width: 60px;
-        max-width: 140px;
         text-align: left;
-        white-space: nowrap;
     }
 
-    th[data-coloana="Munte"],
-    td[data-coloana="Munte"] {
-        width: 120px;
-        min-width: 100px;
-        max-width: 200px;
-        text-align: left;
-        white-space: nowrap;
+    footer {
+        margin-top: 40px;
+        font-size: 12px;
+        color: #666;
     }
+</style>
 
-    th[data-coloana="Autor"],
-    td[data-coloana="Autor"] {
-        min-width: 80px;
-        max-width: 220px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    th[data-coloana="Club"],
-    td[data-coloana="Club"] {
-        width: 80px;
-        min-width: 60px;
-        max-width: 120px;
-        text-align: left;
-        white-space: nowrap;
-    }
-
-    th[data-coloana="Redactor"],
-    td[data-coloana="Redactor"] {
-        width: 80px;
-        min-width: 60px;
-        max-width: 120px;
-        text-align: left;
-        white-space: nowrap;
-    }
-
-    .filter-row input {
-        width: 95%;
-        padding: 3px;
-        box-sizing: border-box;
-    }
-
-    fieldset.grup-selectie legend {
-        cursor: pointer;
-        background: #e0e0e0;
-        padding: 4px 10px;
-        border-radius: 4px;
-        border: 1px solid #888;
-        font-weight: bold;
-        display: inline-block;
-    }
-  </style>
+<script src="./supabase.js"></script>
+<script src="./listare.js"></script>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="login">
-  <h3>Acces restricționat</h3>
-  Parolă: <input id="pass" type="password">
-  <button onclick="login()">Intră</button>
+<h1>Lista peșterilor din Bazinul Hidrografic</h1>
+
+<div class="btn-bar">
+    <button class="btn" onclick="resetFiltre()">Reset filtre</button>
+    <button class="btn" onclick="selectDeselect()">Selectare / Deselectare TOT</button>
+    <button class="btn" onclick="listarePesteri()">Listare Peșteri</button>
+    <button class="btn" onclick="arataHarta()">Arată Harta</button>
 </div>
 
-<!-- CONȚINUT -->
-<div id="content" style="display:none;">
+<div class="section">
+    <div class="section-title">Selectează date suplimentare</div>
 
-  <h2>Lista peșterilor din Bazinul Hidrografic cu codul CodB1</h2>
-
-  CodB1:
-  <select id="bazin">
-    <option value="2046">2046</option>
-    <option value="2050">2050</option>
-  </select>
-
-  <button onclick="loadBazin()">Caută</button>
-  &nbsp;&nbsp;&nbsp;
-  <button onclick="resetFiltre()">Reset filtre</button>
-  &nbsp;&nbsp;&nbsp;
-  <button onclick="toggleToateColoanele()">Selectare / Deselectare TOT</button>
-  &nbsp;&nbsp;&nbsp;
-  <button onclick="window.open('mod.htm', '_blank')">Informatii ajutatoare</button>
-  &nbsp;&nbsp;&nbsp;
-  <button onclick="arataHartaSelectie()">Arată Harta Selecție</button>
-
-<!-- ===================== GRUPURI DE COLOANE ===================== -->
-<div id="selectieColoane">
-    <div class="grupuri">
-
-        <fieldset data-grupa="sinonime">
-            <legend onclick="toggleGrupa('sinonime')">Sinonime – Marcare – Localizare</legend>
-            <label><input type="checkbox" class="coloana-db" value="SinList"> SinList</label><br>
-            <label><input type="checkbox" class="coloana-db" value="SitMarc"> SitMarc</label><br>
-            <label><input type="checkbox" class="coloana-db" value="DomMorf"> DomMorf</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Vale"> Vale</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Afluent"> Afluent</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Versant"> Versant</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Munte"> Munte</label>
-        </fieldset>
-
-        <fieldset data-grupa="intrareA">
-            <legend onclick="toggleGrupa('intrareA')">Caracteristici Intrare A</legend>
-            <label><input type="checkbox" class="coloana-db" value="NrDesc"> NrDesc</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Ld1"> L-d1</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Id1"> I-d1</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Md1"> M-d1</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Hd1"> H-d1</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Od1"> O-d1</label>
-        </fieldset>
-
-        <fieldset data-grupa="parametri">
-            <legend onclick="toggleGrupa('parametri')">Parametri Peșteră</legend>
-            <label><input type="checkbox" class="coloana-db" value="AltAbs" checked> AltAbs</label><br>
-            <label><input type="checkbox" class="coloana-db" value="AltRel" checked> AltRel</label><br>
-            <label><input type="checkbox" class="coloana-db" value="DezvTot" checked> DezvTot</label><br>
-            <label><input type="checkbox" class="coloana-db" value="DenivNC" checked> DenivNC</label><br>
-            <label><input type="checkbox" class="coloana-db" value="DenivPC" checked> DenivPC</label><br>
-            <label><input type="checkbox" class="coloana-db" value="ExtLong"> ExtLong</label><br>
-            <label><input type="checkbox" class="coloana-db" value="NrEtaj"> NrEtaj</label>
-        </fieldset>
-
-        <fieldset data-grupa="importanta">
-            <legend onclick="toggleGrupa('importanta')">Importanța Peșterii</legend>
-            <label><input type="checkbox" class="coloana-db" value="TipolCav"> TipolCav</label><br>
-            <label><input type="checkbox" class="coloana-db" value="MorfoCav"> MorfoCav</label><br>
-            <label><input type="checkbox" class="coloana-db" value="SpTeme"> SpTeme</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Depozit"> Depozit</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Fauna"> Fauna</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Conserv"> Conserv</label>
-        </fieldset>
-
-        <fieldset data-grupa="descoperitori">
-            <legend onclick="toggleGrupa('descoperitori')">Descoperitorii Peșterii</legend>
-            <label><input type="checkbox" class="coloana-db" value="Autor"> Autor</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Club" checked> Club</label><br>
-            <label><input type="checkbox" class="coloana-db" value="DataD"> DataD</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Redactor"> Redactor</label>
-        </fieldset>
-
-        <fieldset data-grupa="harti">
-            <legend onclick="toggleGrupa('harti')">Schițe – Hărți – Documente</legend>
-            <label><input type="checkbox" class="coloana-db" value="num_sch" checked> Schiță</label><br>
-            <label><input type="checkbox" class="coloana-db" value="num_loc" checked> Local</label><br>
-            <label><input type="checkbox" class="coloana-db" value="num_map" checked> Hartă</label><br>
-            <label><input type="checkbox" class="coloana-db" value="num_foto" checked> Foto</label><br>
-            <label><input type="checkbox" class="coloana-db" value="num_alt" checked> Docu</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Latit"> Latit</label><br>
-            <label><input type="checkbox" class="coloana-db" value="Long"> Long</label>
-        </fieldset>
-
+    <div class="checkbox-grid">
+        <label><input type="checkbox" id="SinList"> SinList</label>
+        <label><input type="checkbox" id="SitMarc"> SitMarc</label>
+        <label><input type="checkbox" id="DomMorf"> DomMorf</label>
+        <label><input type="checkbox" id="Vale"> Vale</label>
+        <label><input type="checkbox" id="Afluent"> Afluent</label>
+        <label><input type="checkbox" id="Versant"> Versant</label>
+        <label><input type="checkbox" id="Munte"> Munte</label>
     </div>
 </div>
 
+<div class="section">
+    <div class="section-title">Parametri Peșteră</div>
 
+    <div class="checkbox-grid">
+        <label><input type="checkbox" id="AltAbs"> AltAbs</label>
+        <label><input type="checkbox" id="AltRel"> AltRel</label>
+        <label><input type="checkbox" id="DezvTot"> DezvTot</label>
+        <label><input type="checkbox" id="DenivNC"> DenivNC</label>
+        <label><input type="checkbox" id="DenivPC"> DenivPC</label>
+        <label><input type="checkbox" id="ExtLong"> ExtLong</label>
+        <label><input type="checkbox" id="NrEtaj"> NrEtaj</label>
+        <label><input type="checkbox" id="Importanta"> Importanța</label>
+        <label><input type="checkbox" id="TipolCav"> TipolCav</label>
+        <label><input type="checkbox" id="MorfoCav"> MorfoCav</label>
+        <label><input type="checkbox" id="SpTeme"> SpTeme</label>
+        <label><input type="checkbox" id="Depozit"> Depozit</label>
+        <label><input type="checkbox" id="Fauna"> Fauna</label>
+        <label><input type="checkbox" id="Conserv"> Conserv</label>
+        <label><input type="checkbox" id="Descoperitori"> Descoperitori</label>
+        <label><input type="checkbox" id="Autor"> Autor</label>
+        <label><input type="checkbox" id="Club"> Club</label>
+        <label><input type="checkbox" id="DataD"> DataD</label>
+        <label><input type="checkbox" id="Redactor"> Redactor</label>
+    </div>
+</div>
 
-  <table id="tabelPesteri">
+<table id="tabelPesteri">
     <thead>
-      <tr></tr>
+        <tr>
+            <th>Sel</th>
+            <th>NrP1</th>
+            <th>Var</th>
+            <th>Denumire</th>
+            <th>AltAbs</th>
+            <th>AltRel</th>
+            <th>DezvTot</th>
+            <th>DenivNC</th>
+            <th>DenivPC</th>
+            <th>Club</th>
+            <th>Sch</th>
+            <th>Loc</th>
+            <th>Map</th>
+            <th>Foto</th>
+            <th>Doc</th>
+        </tr>
     </thead>
     <tbody></tbody>
-  </table>
+</table>
 
-</div>
+<footer>
+    2026 – Silex BV – Ovidiu Dolcan și Copilot
+</footer>
 
 </body>
 </html>
