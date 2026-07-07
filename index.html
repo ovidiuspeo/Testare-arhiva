@@ -101,7 +101,20 @@
 <body>
 
 <h1>Lista peșterilor din Bazinul Hidrografic</h1>
+<div style="margin-bottom: 15px;">
+    <label for="bazin"><b>Bazinul:</b></label>
+    <select id="bazin" style="padding: 4px 6px;">
+        <option value="2046">2046</option>
+        <option value="2050">2050</option>
+    </select>
 
+    <button class="btn" onclick="cautaBazin()">Cauta</button>
+
+    <span id="headerBazin" style="margin-left: 20px; font-weight: bold;">
+        Bazinul – 
+    </span>
+</div>
+  
 <div class="btn-bar">
     <button class="btn" onclick="resetFiltre()">Reset filtre</button>
     <button class="btn" onclick="selectDeselect()">Selectare / Deselectare TOT</button>
