@@ -1,4 +1,4 @@
-// ------------ v1.33 -----------------------------------------
+// ------------ v1.34 -----------------------------------------
 // 1. Funcția care afișează tabelul (cu link-uri + filtrare) 
 // -------------------------------------------------------------
 function renderTable(rows, coloaneDeAfisat) {
@@ -81,7 +81,9 @@ function renderTable(rows, coloaneDeAfisat) {
         tr.dataset.denumire = r.Denumire || "";
         tr.dataset.latit = r.Latit || "";
         tr.dataset.long = r.Long || "";
-
+        tr.dataset.num_map = r.num_map || "";
+        tr.dataset.num_sch = r.num_sch || "";
+        
         // Checkbox selecție
         const tdSel = document.createElement("td");
         tdSel.dataset.coloana = "Sel";
@@ -224,7 +226,9 @@ function obtinePesteriSelectate() {
             Var: tr.dataset.var || "",
             Denumire: tr.dataset.denumire,
             Latit: tr.dataset.latit ? parseFloat(tr.dataset.latit) : null,
-            Long: tr.dataset.long ? parseFloat(tr.dataset.long) : null
+            Long: tr.dataset.long ? parseFloat(tr.dataset.long) : null,
+            num_map: tr.dataset.num_map || "",
+            num_sch: tr.dataset.num_sch || ""           
         };
 
         selectate.push(r);
