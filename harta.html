@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
-<title>Harta – v.1.39d</title>
+<title>Harta – v.1.40</title>
 
 <!-- Unifica localStorage intre index.html si harta.html -->
 <base href="/Testare-arhiva/">
@@ -98,6 +98,14 @@ const selectie = JSON.parse(localStorage.getItem("selectiePesteri") || "[]");
 const codB1 = selectie.length > 0 ? selectie[0].CodB1 : "";
 document.getElementById("codB1Title").textContent = codB1;
 
+const configMedia = {
+    num_alt: "diverse",
+    num_foto: "intrari",
+    num_sch: "schite",
+    num_loc: "localizari",
+    num_map: "harti"
+};
+
 // -------------------------------------------------------------
 // 2. Initializam harta
 // -------------------------------------------------------------
@@ -158,6 +166,14 @@ selectie.forEach((p) => {
     tbody.appendChild(tr);
 
     if (p.Latit && p.Long) {
+
+    // 2. Construim link-urile EXACT ca în listare.js
+    const bucketSchita = configMedia["num_sch"];
+    const bucketHarta  = configMedia["num_map"];
+
+    const linkSchita = `https://uymmflfhpeurfiigeivh.supabase.co/storage/v1/object/public/${bucketSchita}/${p.CodB1}/${p.num_sch}`;
+    const linkHarta  = `https://uymmflfhpeurfiigeivh.supabase.co/storage/v1/object/public/${bucketHarta}/${p.CodB1}/${p.num_map}`;
+      
         const m = L.marker([p.Latit, p.Long]).addTo(map);
         m.bindPopup(`
             <div style="font-size:14px; line-height:1.3;">
@@ -165,10 +181,10 @@ selectie.forEach((p) => {
                 ${p.Denumire}<br>
                 Latitudine: ${p.Latit}<br>
                 Longitudine: ${p.Long}<br>
-                <button onclick="window.close()" 
+                <button onclick="window.open('${linkHarta}', '_blank')" 
                   style="padding:5px 10px; font-size:12px; cursor:pointer; margin-bottom:10px;">
                 <b>Harta</b></button>
-                <button onclick="window.close()" 
+                <button onclick="window.open('${linkSchita}', '_blank')" 
                   style="padding:5px 10px; font-size:12px; cursor:pointer; margin-bottom:10px;">
                 <b>Schita</b></button>
             </div>
