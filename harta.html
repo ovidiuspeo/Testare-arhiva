@@ -65,15 +65,17 @@
 <div id="sidebar">
   <div id="title">Bazinul – <span id="codB1Title"></span></div>
 
-  <div>
+  <div style="display:flex; align-items:center; gap:20px; margin-bottom:10px;">
     <button onclick="window.close()" 
-      style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
-      <b>Inapoi</b></button> 
-  &nbsp;&nbsp;&nbsp;
-  <label style="display:block; margin-bottom:10px;">
-    <input type="checkbox" id="modMarcare" />
-    <b>Marcare</b></label>
-  </div>
+        style="padding:5px 10px; font-size:14px; cursor:pointer;">
+        <b>Inapoi</b>
+    </button>
+
+    <label style="display:flex; align-items:center; gap:5px;">
+        <input type="checkbox" id="modMarcare" />
+        <b>Marcare</b>
+    </label>
+</div>
   <table id="lista">
     <thead>
       <tr>
