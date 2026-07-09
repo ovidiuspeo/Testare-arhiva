@@ -165,8 +165,12 @@ selectie.forEach((p) => {
             <div style="font-size:14px; line-height:1.3;">
                 <b>${p.CodB1}/${p.NrP1}</b><br>
                 ${p.Denumire}<br>
-                Lat: ${p.Latit}<br>
-                Longi7: ${p.Long}
+                Latitudine: ${p.Latit}<br>
+                Longitudine: ${p.Long}<br>
+                <button onclick="window.close()" 
+          style="padding:5px 10px; font-size:14px; cursor:pointer; margin-bottom:10px;">
+      Harta
+  </button>
             </div>
         `);
         markers.push(m);
