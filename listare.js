@@ -79,7 +79,7 @@ function renderTable(rows, coloaneDeAfisat) {
         tr.dataset.nrp1 = r.NrP1;
         tr.dataset.var = r.Var || "";
         tr.dataset.denumire = r.Denumire || "";
-        tr.dataset.sitmarc = r.SitMarc;
+        tr.dataset.sitmarc = r.SitMarc || "";
         tr.dataset.latit = r.Latit || "";
         tr.dataset.long = r.Long || "";
         tr.dataset.num_map = r.num_map || "";
