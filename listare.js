@@ -1,4 +1,4 @@
-// ------------ v1.34 -----------------------------------------
+// ------------ v1.40 -----------------------------------------
 // 1. Funcția care afișează tabelul (cu link-uri + filtrare) 
 // -------------------------------------------------------------
 function renderTable(rows, coloaneDeAfisat) {
@@ -79,6 +79,7 @@ function renderTable(rows, coloaneDeAfisat) {
         tr.dataset.nrp1 = r.NrP1;
         tr.dataset.var = r.Var || "";
         tr.dataset.denumire = r.Denumire || "";
+        tr.dataset.sitmarc = r.SitMarc || "";
         tr.dataset.latit = r.Latit || "";
         tr.dataset.long = r.Long || "";
         tr.dataset.num_map = r.num_map || "";
@@ -225,6 +226,7 @@ function obtinePesteriSelectate() {
             NrP1: tr.dataset.nrp1,
             Var: tr.dataset.var || "",
             Denumire: tr.dataset.denumire,
+            SitMarc: tr.dataset.sitmarc,
             Latit: tr.dataset.latit ? parseFloat(tr.dataset.latit) : null,
             Long: tr.dataset.long ? parseFloat(tr.dataset.long) : null,
             num_map: tr.dataset.num_map || "",
